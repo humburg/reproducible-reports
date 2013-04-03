@@ -1,0 +1,7 @@
+This is the source code repository of the Julian Knight group.
+It is meant to host the code base for all software tools developed
+in the group. Different tools should use different branches of the 
+repository.
+
+The repository is connected to a Trac wiki and issue tracker at
+http://galahad.well.ox.ac.uk:8000
