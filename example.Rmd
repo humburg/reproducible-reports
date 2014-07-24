@@ -80,6 +80,16 @@ If you add a space to the end of a line
 the line break will be preserved in the conversion
 to the output format.  
 ```
+Output looks like this:
+
+This is the first paragraph.
+Line breaks are generally ignored in formatting.
+
+This is the second paragraph.
+If you add a space to the end of a line 
+the line break will be preserved in the conversion
+to the output format.
+
 
 Several methods of highlighting text are supported:
 ```markdown
@@ -87,26 +97,44 @@ Words within a paragraph and be *emphasised*. These are usually rendered in *ita
 **Strong emphasis** typically results in **bold** text. Instead of * it is also possible
 to use _ for emphasis. With pandoc it is also possible to ~~strike out~~ text.
 ```
+Output looks like this:
+
+Words within a paragraph and be *emphasised*. These are usually rendered in *italics*.
+**Strong emphasis** typically results in **bold** text. Instead of * it is also possible
+to use _ for emphasis. With pandoc it is also possible to ~~strike out~~ text.
+
 
 ## Block elements
 
 ### Block quotes
 In Markdown quotes can be marked using the same conventions commonly used in email:
 ```markdown
-> This text is quoted. A single ">" at the beginning
-of the paragraph is sufficient for the entire paragraph 
-to be quoted.
-> 
-> > You can also quote other quotes, i.e. block quotes can be nested.
+ > This text is quoted. A single ">" at the beginning
+ > of the paragraph is sufficient for the entire paragraph 
+ > to be quoted (but syntax highlighting may not work properly).
+ > 
+ > > You can also quote other quotes, i.e. block quotes can be nested.
 ```
+Output looks like this:
+ 
+ > This text is quoted. A single ">" at the beginning
+ > of the paragraph is sufficient for the entire paragraph 
+ > to be quoted (but syntax highlighting may not work properly).
+ > 
+ > > You can also quote other quotes, i.e. block quotes can be nested.
 
 ### Lists
 Basic bullet lists can be created by starting a line with a \*:
 ```markdown
-* first item
-* second item
-* third item
+ * first item
+ * second item
+ * third item
 ```
+Output looks like this:
+ 
+ * first item
+ * second item
+ * third item
 
 Ordered lists start with numbers
 ```markdown
@@ -126,4 +154,16 @@ in `pandoc`. See the [documentation](http://johnmacfarlane.net/pandoc/README.htm
 for more details. 
 
 ### Tables
-
+Basic Markdown tables are created by lining up the columns and making headers, like so:
+```markdown
+ Column 1    Column 2    Column 3
+ --------    --------    --------
+   1            10         100
+   2            20         200
+   3            30         300
+  
+ Table: A simple table 
+```
+Just as with lists there are several variations and extensions to this basic syntax
+supported by `pandoc`. As usual, details can be found in the
+[documentation](http://johnmacfarlane.net/pandoc/README.html#tables).
