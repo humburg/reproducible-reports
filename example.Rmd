@@ -32,7 +32,7 @@ code blocks:
 message("This is R code")
 ```
 
-```md
+```markdown
 This is Markdown text in **bold** and *italics*.
 ```
 In addition to the code examples provided throughout this document the document itself is
@@ -44,12 +44,17 @@ formatting marks. It is designed to be easy to write and read in its raw form. A
 it was originally designed as an easier way to write web pages it can be converted to
 many other rich text formats.  
 
+The purpose of this section is to briefly describe basic elements of Markdown formatting.
+More detailed descriptions are available online, e.g. at the official
+[Markdown](http://daringfireball.net/projects/markdown/syntax) and
+[`pandoc`](http://johnmacfarlane.net/pandoc/README.html) websites.
+
 ## Headers, paragraphs and emphasis
 The basics of text formatting involve marking of text as headings, structuring 
 it into paragraphs and highlighting selected words for emphasis. Headings can be
 created by underlining them:
 
-```md
+```markdown
 This is a top level heading
 ===========================
 This is some ordinary text.
@@ -64,4 +69,61 @@ Adding more "#" creates lower level headings
 
 Note that `pandoc` also allows the use of "#" and "##" for first and second level headings. 
 
+Paragraphs are created by adding an empty line between two lines of text:
+
+```markdown
+This is the first paragraph.
+Line breaks are generally ignored in formatting.
+
+This is the second paragraph.
+If you add a space to the end of a line 
+the line break will be preserved in the conversion
+to the output format.  
+```
+
+Several methods of highlighting text are supported:
+```markdown
+Words within a paragraph and be *emphasised*. These are usually rendered in *italics*.
+**Strong emphasis** typically results in **bold** text. Instead of * it is also possible
+to use _ for emphasis. With pandoc it is also possible to ~~strike out~~ text.
+```
+
+## Block elements
+
+### Block quotes
+In Markdown quotes can be marked using the same conventions commonly used in email:
+```markdown
+> This text is quoted. A single ">" at the beginning
+of the paragraph is suficient for the entire paragraph 
+to be quoted.
+> 
+> > You can also qute other quotes, i.e. block quotes can be nested.
+```
+
+### Lists
+Basic bullet lists can be created by starting a line with a \*:
+```markdown
+* first item
+* second item
+* third item
+```
+
+Ordered lists start with numbers
+```markdown
+1. first item
+2. second item
+3. third item
+```
+but `pandoc` also allows this:
+```markdown
+#. first item
+#. second item
+#. third item
+```
+
+There is support for other of list types and variations of the basic syntax
+in `pandoc`. See the [documentation](http://johnmacfarlane.net/pandoc/README.html#lists)
+for more details. 
+
+### Tables
 
