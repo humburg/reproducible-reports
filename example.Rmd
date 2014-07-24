@@ -4,7 +4,7 @@
 
 # Introduction
 This is an example document demonstrating how to use 
-[Markdown](http://en.wikipedia.org/wiki/Markdown) documents with embedded R code to
+[Markdown](http://daringfireball.net/projects/markdown/) documents with embedded R code to
 create dynamic documents in multiple formats, e.g. HTML, PDF and Word. This is useful
 to generate reports (or papers) that contain all the relevant R code to carry out
 the analysis and allows for automatic updates to the document if either the code or 
@@ -15,11 +15,11 @@ automatically.
 Several tools are available to do this but here we will mainly focus on a combination
 of two of these.
 
-[knitr](http://yihui.name/knitr/)
+[`knitr`](http://yihui.name/knitr/)
 :   This R package provides functions that allow the processing of Markdown documents
     with embedded R code. The code will be executed and its output, including plots,
     can be included in the output.
-[pandoc](http://johnmacfarlane.net/pandoc/)
+[`pandoc`](http://johnmacfarlane.net/pandoc/)
 :   This is a versatile tool that supports conversion between a large number of input
     and output formats. We will use 
     [pandoc's own Markdown flavour](http://johnmacfarlane.net/pandoc/demo/example9/pandocs-markdown.html)
@@ -39,3 +39,29 @@ In addition to the code examples provided throughout this document the document 
 written in Markdown with embedded R code and may illustrate additional features.
 
 # Brief Markdown primer
+A Markdown formatted file is in essence a plain text file that may contain a number of
+formatting marks. It is designed to be easy to write and read in its raw form. Although
+it was originally designed as an easier way to write web pages it can be converted to
+many other rich text formats.  
+
+## Headers, paragraphs and emphasis
+The basics of text formatting involve marking of text as headings, structuring 
+it into paragraphs and highlighting selected words for emphasis. Headings can be
+created by underlining them:
+
+```md
+This is a top level heading
+===========================
+This is some ordinary text.
+
+This is a second level heading
+------------------------------
+It is followed by more ordinary text.
+
+### Third level heading
+Adding more "#" creates lower level headings
+```
+
+Note that `pandoc` also allows the use of "#" and "##" for first and second level headings. 
+
+
