@@ -1,0 +1,25 @@
+% Using knitr and pandoc to create dynamic documents
+% Peter Humburg
+% `r format(Sys.time(), "%a %b %d %Y")`
+
+# Introduction
+This is an example document demonstrating how to use 
+[http://en.wikipedia.org/wiki/Markdown Markdown] documents with embedded R code to
+create dynamic documents in multiple formats, e.g. HTML, PDF and Word. This is useful
+to generate reports (or papers) that contain all the relevant R code to carry out
+the analysis and allows for automatic updates to the document if either the code or 
+the data change. As a result analyses become a lot easier to reproduce because the code  
+and the presentation of results are closely linked and figures and tables can be updated 
+automatically.
+
+Several tools are available to do this but here we will mainly focus on a combination
+of two of these.
+[http://yihui.name/knitr/ knitr]
+  ~ This R package provides functions that allow the processing of Markdown documents
+    with embedded R code. The code will be executed and its output, including plots,
+    can be included in the output.
+[http://johnmacfarlane.net/pandoc/ pandoc]
+  ~ This is a versatile tool that supports conversion between a large number of input
+    and output formats. We will use pandoc's own Markdown flavour (which includes
+    numerous extension to the original format) as input and use its conversion capabilities
+    to obtain output in several commonly used formats.  
