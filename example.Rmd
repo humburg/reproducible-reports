@@ -94,10 +94,10 @@ to use _ for emphasis. With pandoc it is also possible to ~~strike out~~ text.
 In Markdown quotes can be marked using the same conventions commonly used in email:
 ```markdown
 > This text is quoted. A single ">" at the beginning
-of the paragraph is suficient for the entire paragraph 
+of the paragraph is sufficient for the entire paragraph 
 to be quoted.
 > 
-> > You can also qute other quotes, i.e. block quotes can be nested.
+> > You can also quote other quotes, i.e. block quotes can be nested.
 ```
 
 ### Lists
