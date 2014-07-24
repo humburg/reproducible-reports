@@ -1,24 +1,2 @@
-This is the source code repository of the Julian Knight group.
-It is meant to host the code base for all software tools developed
-in the group. Different tools should use different branches of the 
-repository.
-
-To clone only the branch for a specific tool:
-git clone --single-branch --branch <branch name> ssh://galahad.well.ox.ac.uk/data/backup/git/jknight.git <branch name>
-
-To create a branch for a new tool:
-## first clone the master branch to get a clean copy
-git clone ssh://galahad.well.ox.ac.uk/data/backup/git/jknight.git
-
-## then add the branch
-git branch <branch name>
-git push origin <branch name>
-git checkout <branch name>
-git branch --set-upstream <branch name> origin/<branch name>
-git pull
-
-Now add the initial version of the sources and push them to the
-central repository.
-
-The repository is connected to a Trac wiki and issue tracker at
-http://galahad.well.ox.ac.uk:8000
+These are some examples on how to use Markdown with R and pandoc to get create
+dynamic documents in multiple formats. 
