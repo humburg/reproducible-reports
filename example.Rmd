@@ -4,22 +4,38 @@
 
 # Introduction
 This is an example document demonstrating how to use 
-[http://en.wikipedia.org/wiki/Markdown Markdown] documents with embedded R code to
+[Markdown](http://en.wikipedia.org/wiki/Markdown) documents with embedded R code to
 create dynamic documents in multiple formats, e.g. HTML, PDF and Word. This is useful
 to generate reports (or papers) that contain all the relevant R code to carry out
 the analysis and allows for automatic updates to the document if either the code or 
-the data change. As a result analyses become a lot easier to reproduce because the code  
+the data change. As a result analyses become a lot easier to reproduce because the code
 and the presentation of results are closely linked and figures and tables can be updated 
 automatically.
 
 Several tools are available to do this but here we will mainly focus on a combination
 of two of these.
-[http://yihui.name/knitr/ knitr]
-  ~ This R package provides functions that allow the processing of Markdown documents
+
+[knitr](http://yihui.name/knitr/)
+:   This R package provides functions that allow the processing of Markdown documents
     with embedded R code. The code will be executed and its output, including plots,
     can be included in the output.
-[http://johnmacfarlane.net/pandoc/ pandoc]
-  ~ This is a versatile tool that supports conversion between a large number of input
-    and output formats. We will use pandoc's own Markdown flavour (which includes
-    numerous extension to the original format) as input and use its conversion capabilities
-    to obtain output in several commonly used formats.  
+[pandoc](http://johnmacfarlane.net/pandoc/)
+:   This is a versatile tool that supports conversion between a large number of input
+    and output formats. We will use 
+    [pandoc's own Markdown flavour](http://johnmacfarlane.net/pandoc/demo/example9/pandocs-markdown.html)
+    (which includes numerous extension to the original format) as input and use its 
+    conversion capabilities to obtain output in several commonly used formats.  
+
+Throughout this document examples of R code and Markdown formatting will be presented in 
+code blocks:
+```r
+message("This is R code")
+```
+
+```md
+This is Markdown text in **bold** and *italics*.
+```
+In addition to the code examples provided throughout this document the document itself is
+written in Markdown with embedded R code and may illustrate additional features.
+
+# Brief Markdown primer
