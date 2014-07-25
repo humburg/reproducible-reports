@@ -32,9 +32,21 @@ code blocks:
 message("This is R code")
 ```
 
+To better show the effect of Markdown examples on the output these will often be
+followed by the same text rendered in the output format. To distinguish these examples
+from the main text the entire block of raw and converted Markdown will be framed by
+horizontal lines. 
+
+----
+
 ```markdown
 This is Markdown text in **bold** and *italics*.
 ```
+
+This is Markdown text in **bold** and *italics*.
+
+----
+
 In addition to the code examples provided throughout this document the document itself is
 written in Markdown with embedded R code and may illustrate additional features.
 
@@ -71,43 +83,51 @@ Note that `pandoc` also allows the use of "#" and "##" for first and second leve
 
 Paragraphs are created by adding an empty line between two lines of text:
 
+----
+
 ```markdown
 This is the first paragraph.
 Line breaks are generally ignored in formatting.
 
 This is the second paragraph.
-If you add a space to the end of a line 
+If you add two or more spaces to the end of a line  
 the line break will be preserved in the conversion
 to the output format.  
 ```
-Output looks like this:
 
 This is the first paragraph.
 Line breaks are generally ignored in formatting.
 
 This is the second paragraph.
-If you add a space to the end of a line 
+If you add two or more spaces to the end of a line  
 the line break will be preserved in the conversion
 to the output format.
 
+----
 
 Several methods of highlighting text are supported:
+
+----
+
 ```markdown
 Words within a paragraph and be *emphasised*. These are usually rendered in *italics*.
 **Strong emphasis** typically results in **bold** text. Instead of * it is also possible
 to use _ for emphasis. With pandoc it is also possible to ~~strike out~~ text.
 ```
-Output looks like this:
 
 Words within a paragraph and be *emphasised*. These are usually rendered in *italics*.
 **Strong emphasis** typically results in **bold** text. Instead of * it is also possible
 to use _ for emphasis. With pandoc it is also possible to ~~strike out~~ text.
 
+----
 
 ## Block elements
 
 ### Block quotes
 In Markdown quotes can be marked using the same conventions commonly used in email:
+
+----
+
 ```markdown
  > This text is quoted. A single ">" at the beginning
  > of the paragraph is sufficient for the entire paragraph 
@@ -115,39 +135,64 @@ In Markdown quotes can be marked using the same conventions commonly used in ema
  > 
  > > You can also quote other quotes, i.e. block quotes can be nested.
 ```
-Output looks like this:
  
  > This text is quoted. A single ">" at the beginning
  > of the paragraph is sufficient for the entire paragraph 
  > to be quoted (but syntax highlighting may not work properly).
  > 
  > > You can also quote other quotes, i.e. block quotes can be nested.
+
+----
 
 ### Lists
 Basic bullet lists can be created by starting a line with a \*:
+
+----
+
 ```markdown
  * first item
  * second item
  * third item
 ```
-Output looks like this:
  
  * first item
  * second item
  * third item
 
+----
+
 Ordered lists start with numbers
+
+----
+
 ```markdown
 1. first item
 2. second item
 3. third item
 ```
+
+1. first item
+2. second item
+3. third item
+
+----
+
 but `pandoc` also allows this:
+
+----
+
 ```markdown
 #. first item
 #. second item
 #. third item
 ```
+
+#. first item
+#. second item
+#. third item
+
+----
+
 
 There is support for other of list types and variations of the basic syntax
 in `pandoc`. See the [documentation](http://johnmacfarlane.net/pandoc/README.html#lists)
@@ -155,6 +200,9 @@ for more details.
 
 ### Tables
 Basic Markdown tables are created by lining up the columns and making headers, like so:
+
+----
+
 ```markdown
  Column 1    Column 2    Column 3
  --------    --------    --------
@@ -164,6 +212,54 @@ Basic Markdown tables are created by lining up the columns and making headers, l
   
  Table: A simple table 
 ```
+
+
+  Column 1      Column 2      Column 3
+ ----------    ----------    ----------
+   1              10            100
+   2              20            200
+   3              30            300
+  
+ Table: A simple table 
+
+----
+
 Just as with lists there are several variations and extensions to this basic syntax
 supported by `pandoc`. As usual, details can be found in the
 [documentation](http://johnmacfarlane.net/pandoc/README.html#tables).
+
+### Code blocks and inline code
+Special blocks to display source code with syntax highlighting can be included by starting
+a line with three back ticks, optionally followed by attributes to control aspects of
+the highlighting. A block like the one below will be rendered as R code.
+
+----
+
+````
+```r
+x <- seq(-6,6, by=0.1)
+y <- dnorm(x)
+plot(x, y, type="l", main="Standard normal density")
+```
+````
+
+```r
+x <- seq(-6,6, by=0.1)
+y <- dnorm(x)
+plot(x, y, type="l", main="Standard normal density")
+```
+
+----
+
+Code fragments can also be included inline:
+
+----
+
+```markdown
+This is normal text with some R code: `x <- runif(100)`{.r}.
+```
+This is normal text with some R code: `x <- runif(100)`{.r}.
+
+----
+
+
