@@ -2,15 +2,33 @@
 % Peter Humburg
 % `r format(Sys.time(), "%a %b %d %Y")`
 
+
+```{r setup, echo = FALSE}
+require(knitr)
+hook_source_def = knit_hooks$get('source')
+knit_hooks$set(source = function(x, options){
+  if (!is.null(options$verbatim) && options$verbatim){
+    opts = gsub(",\\s*verbatim\\s*=\\s*TRUE\\s*", "", options$params.src)
+    bef = sprintf('\n\n    ```{r %s}\n', opts, "\n")
+    stringr::str_c(bef, paste(knitr:::indent_block(x, "    "), collapse = '\n'), "\n    ```\n")
+  } else {
+     hook_source_def(x, options)
+  }
+})
+
+rinline <- function(code){
+	sprintf('`r %s`', code)
+}
+```
+
 # Introduction
-This is an example document demonstrating how to use 
-[Markdown](http://daringfireball.net/projects/markdown/) documents with embedded R code to
-create dynamic documents in multiple formats, e.g. HTML, PDF and Word. This is useful
-to generate reports (or papers) that contain all the relevant R code to carry out
-the analysis and allows for automatic updates to the document if either the code or 
-the data change. As a result analyses become a lot easier to reproduce because the code
-and the presentation of results are closely linked and figures and tables can be updated 
-automatically.
+This is an introduction to the use of [Markdown](http://daringfireball.net/projects/markdown/)
+with embedded R code to create dynamic documents in multiple formats, 
+e.g. HTML, PDF and Word. This is useful to generate reports (or papers) that contain all
+the relevant R code to carry out the analysis and allows for automatic updates to the 
+document if either the code or the data change. As a result analyses become a lot 
+easier to reproduce because the code and the presentation of results are closely 
+linked and figures and tables can be updated automatically.
 
 Several tools are available to do this but here we will mainly focus on a combination
 of two of these.
@@ -238,15 +256,27 @@ the highlighting. A block like the one below will be rendered as R code.
 ````
 ```r
 x <- seq(-6,6, by=0.1)
-y <- dnorm(x)
-plot(x, y, type="l", main="Standard normal density")
+yNorm <- dnorm(x)
+yt <- dt(x, df=3)
+yCauchy <- dcauchy(x)
+plot(x, yNorm, type="l", ylab="Density")
+lines(x, yt, col=2)
+lines(x, yCauchy, col=4)
+legend("topright", legend=c("standard normal", "t (df=2)", "Cauchy"), 
+    col=c(1,2,4), lty=1)
 ```
 ````
 
 ```r
 x <- seq(-6,6, by=0.1)
-y <- dnorm(x)
-plot(x, y, type="l", main="Standard normal density")
+yNorm <- dnorm(x)
+yt <- dt(x, df=3)
+yCauchy <- dcauchy(x)
+plot(x, yNorm, type="l", ylab="Density")
+lines(x, yt, col=2)
+lines(x, yCauchy, col=4)
+legend("topright", legend=c("standard normal", "t (df=2)", "Cauchy"), 
+    col=c(1,2,4), lty=1)
 ```
 
 ----
@@ -262,4 +292,71 @@ This is normal text with some R code: `x <- runif(100)`{.r}.
 
 ----
 
+# Using `knitr` for dynamic code blocks
+The code blocks we have seen so far are all static, i.e. while they do include
+valid source code this code is not interpreted, just displayed. To achieve the aim of
+a dynamic document that can be updated automatically if the underlying data or analysis
+change we need code blocks that are actually executed. The `knitr` R package does just 
+that. Lets look again at the R code from the example in the previous section but this 
+time we will use a code block that `knitr` will process. 
+
+````
+```{r distributions, verbatim = TRUE}
+x <- seq(-6,6, by=0.1)
+yNorm <- dnorm(x)
+yt <- dt(x, df=3)
+yCauchy <- dcauchy(x)
+```
+````
+
+In this example syntac highlighting for the R code has been switched off
+to better demonstrate how the code chunks are created. Once the code in the above
+block has been evaluated we can use it for inline R statements that will be
+replaced with the computed values. For example we can do something like this:
+
+----
+
+```markdown
+The Normal density was evaluated at `r rinline("length(yNorm)")` points.
+```
+
+The Normal density was evaluated at `r length(yNorm)` points.
+
+----
+
+## Figures
+To add a figure with a plot of the data all that is needed is to create the
+plot in an R chunk.
+
+```{r distribution_plot, fig.cap="Three related distributions"}
+plot(x, yNorm, type="l", ylab="Density")
+lines(x, yt, col=2)
+lines(x, yCauchy, col=4)
+legend("topright", legend=c("standard normal", "t (df=2)", "Cauchy"), 
+   col=c(1,2,4), lty=1)
+```
+
+This automatically includes the plot that was generated as a figure in the
+final document. It is possible to include a custom caption using the chunk option
+`fig.cap`.
+
+## Animations
+It is possible to include animations (generated from a series of plots) instead of 
+a single figure. Look at this slightly more complex version of the previous example:
+
+```{r distributions2, fig.show="animate", fig.cap="Three related distributions"}
+x <- seq(-6,6, by=0.1)
+yNorm <- dnorm(x)
+yCauchy <- dcauchy(x)
+par(bg="white")
+for(i in 1:20){
+    plot(x, yNorm, type="l", ylab="Density")
+    lines(x, dt(x, df=i), col=2)
+    lines(x, yCauchy, col=4)
+    legend("topright", legend=c("standard normal", paste0("t (df = ", i, ")"), "Cauchy"), 
+       col=c(1,2,4), lty=1)
+}
+```
+
+## Tables
 
