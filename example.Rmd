@@ -479,4 +479,9 @@ function and can handle a wide variety of R objects.
 
 ## Equations
 
+# Apendix
+## Session info
+```{r session-info, echo=FALSE, results="asis"}
+print(sessionInfo())
+```
 
