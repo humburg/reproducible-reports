@@ -406,7 +406,58 @@ Here we make use of `pandoc`'s `--default-image-extension` option to set the dae
 image format to gif for HTML and docx output and to png for PDF.
 
 ## Tables
+It is often convenient to display the contents of R objects in the final document.
+While it is easy to simply display the output of R's `print` statement as it would
+be displayed in the R console, this is not exactly producing pretty results. It
+is much more elegant to include proper tables that can be rendered nicely in
+the final document. Manually  formatting the output as a Markdown table (that pandoc
+will then convert to the final output format) can be a daunting task. Fortunately
+R functions exist to help with this task. The `knitr` package provides a simple function, 
+`kable`, that allows automatic formatting of tables. This requires the data to be in a 
+suitable format (either a `data.frame` or a `matrix`) so some preprocessing may be necessary.
 
+```{r iris1, results="asis"}
+data(iris)
+knitr::kable(head(iris))
+```
+
+A table of summary statistics can be obtained with a little extra effort:
+```{r iris2}
+irisSummary <- apply(iris[,1:4], 2, function(x) tapply(x, iris$Species, summary))
+irisSummary <- lapply(irisSummary, do.call, what=rbind)
+```
+
+This produces a list of matrices with summary statistics by iris species:
+
+```{r iris3}
+irisSummary
+```
+
+Each of these can again be displayed as a nicely formatted table using `kable`
+but unfortunately information about the column that was summarised will be lost
+in the process. For some output formats `kable` supports the use of a `caption`
+option but unfortuantely this doesn't work when producing Markdown, as is the
+case here. An alternative is to use the `pander` package to produce output
+suitable for further processing with pandoc.
+
+```{r iris4, results="asis"}
+suppressPackageStartupMessages(library(pander))
+panderOptions('table.split.table', Inf) ## don't split tables
+pander(irisSummary[1:2])
+```
+
+Alternatively the following code produces somewhat more elegant output at
+the expense of a few extra lines of code.
+
+```{r iris5, results="asis"}
+for(i in 3:4){
+    set.caption(sub(".", " ", names(irisSummary)[i], fixed=TRUE))
+    pander(irisSummary[[i]])
+}
+```
+
+The functionality provided by `pander` is alot more poweful than the simple `kable`
+function and can handle a wide variety of R objects.
 
 # Converting from Markdown to multiple output formats using `knitr`
 
@@ -427,4 +478,5 @@ image format to gif for HTML and docx output and to png for PDF.
 
 
 ## Equations
+
 
