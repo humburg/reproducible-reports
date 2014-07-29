@@ -401,5 +401,30 @@ png("dist3.png")
 threeDists(1)
 dev.off()
 ```
+
+Here we make use of `pandoc`'s `--default-image-extension` option to set the daefault
+image format to gif for HTML and docx output and to png for PDF.
+
 ## Tables
+
+
+# Converting from Markdown to multiple output formats using `knitr`
+
+
+# Preparing manuscripts for publication
+
+
+## Requirements
+
+
+## Document meta information
+
+
+## Better figure and table captions
+
+
+## Adding a bibliography
+
+
+## Equations
 
