@@ -1,4 +1,4 @@
-% Using knitr and pandoc to create dynamic documents
+% Using knitr and pandoc to create reproducible scientific reports
 % Peter Humburg
 % `r format(Sys.time(), "%a %b %d %Y")`
 
