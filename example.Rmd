@@ -332,7 +332,7 @@ plot in an R chunk.
 plot(x, yNorm, type="l", ylab="Density")
 lines(x, yt, col=2)
 lines(x, yCauchy, col=4)
-legend("topright", legend=c("standard normal", "t (df=2)", "Cauchy"), 
+legend("topright", legend=c("standard normal", "t (df=3)", "Cauchy"), 
    col=c(1,2,4), lty=1)
 ```
 
@@ -344,7 +344,7 @@ final document. It is possible to include a custom caption using the chunk optio
 It is possible to include animations (generated from a series of plots) instead of 
 a single figure. Look at this slightly more complex version of the previous example:
 
-```{r distributions2, fig.show="animate", fig.cap="Three related distributions"}
+```{r distributions2, fig.show="animate", fig.cap="Movie of three related distributions"}
 x <- seq(-6,6, by=0.1)
 yNorm <- dnorm(x)
 yCauchy <- dcauchy(x)
@@ -358,5 +358,48 @@ for(i in 1:20){
 }
 ```
 
+It is possible to generate an animated GIF from this sequence of plots by wrapping the
+above code in a function and then calling `saveGIF` from the animation package.
+
+```{r distributions3, results="hide"}
+threeDists <- function(df, x=seq(-6,6, by=0.1)){
+    yNorm <- dnorm(x)
+    yCauchy <- dcauchy(x)
+    yt <- dt(x, df=df)
+    par(bg="white")
+    plot(x, yNorm, type="l", ylab="Density")
+    lines(x, yt, col=2)
+    lines(x, yCauchy, col=4)
+    legend("topright", legend=c("standard normal", paste0("t (df = ", df, ")"), "Cauchy"), 
+       col=c(1,2,4), lty=1)
+}
+
+plotFun <- function(df){
+    threeDists(df)
+    animation::ani.pause()
+}
+
+animation::saveGIF(lapply(1:20, plotFun), interval=0.5, movie.name="dist3.gif")
+```
+
+Since the graphics output of this code is written directly to a file rather than an on-screen
+graphics device it will not outomatically included in the Markdown document produced 
+by `knitr`. It can be included manually using the Markdown syntax for the inclusion
+of figures.
+
+```markdown
+![Animated GIF of three related distributions](dist3) 
+```
+![Animated GIF of three related distributions](dist3)
+
+Note that this only works for output document formats that support GIFs. As a fallback
+we generate a png of the first frame to be included in other formats, e.g. PDF, that
+can't display GIFs.
+
+```{r dist3-png, results="hide"}
+png("dist3.png")
+threeDists(1)
+dev.off()
+```
 ## Tables
 
