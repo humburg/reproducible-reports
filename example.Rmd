@@ -482,6 +482,6 @@ function and can handle a wide variety of R objects.
 # Apendix
 ## Session info
 ```{r session-info, echo=FALSE, results="asis"}
-print(sessionInfo())
+sessionInfo()
 ```
 
