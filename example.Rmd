@@ -492,9 +492,15 @@ like this makes it easy to manage the (potentially large) number of options requ
 achieve the desired output.  
 
 # Preparing manuscripts for publication
-
+Once an analysis has been completed and documented using techniques like the ones
+described above it may be desirable to use it as part of a publication without having
+to re-write it all. The purpose of this chapter is to investigate how well the authoring
+of scientific papers in Markdown is supported by the combination of `knitr` and `pandoc`
+and to demonstrate customisations to the default set-up where rquired.
 
 ## Requirements
+To be able to produce manuscripts that are suitable for submission to scientific journal
+several features are required.
 
 
 ## Document meta information
@@ -506,9 +512,13 @@ achieve the desired output.
 ## Adding a bibliography
 
 
+## Footnotes
+
+
 ## Equations
 
-# Apendix
+
+# Apendix {-}
 ## Session info
 ```{r session-info, echo=FALSE, results="asis"}
 sessionInfo()
