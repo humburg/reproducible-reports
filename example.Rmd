@@ -485,11 +485,11 @@ chunk option].
 ```
 ````
 
-This file contains one block fith format specific options for each output format, 
+This file contains one block with format specific options for each output format, 
 starting with `t: <format>`. Note that the first block has no target format specification
-and contains options that apply to all output formats. The use of a config file like this
-makes it easy to manage the (potentially large) number of options required to achieve the 
-desired output.  
+and contains options that apply to all output formats. The use of a configuration file 
+like this makes it easy to manage the (potentially large) number of options required to 
+achieve the desired output.  
 
 # Preparing manuscripts for publication
 
