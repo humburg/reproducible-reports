@@ -1,0 +1,21 @@
+standalone:
+smart:
+normalize:
+toc:
+highlight-style: tango
+
+t: html5
+self-contained:
+c: include/buttondown.css
+default-image-extension: gif
+
+t: latex
+chapters:
+latex-engine: xelatex
+V: geometry:margin=1in
+V: documentclass:report
+H: include/captions.tex
+default-image-extension: png
+
+t: docx
+default-image-extension: gif
