@@ -475,7 +475,10 @@ worse these command lines may differ depending on the desired output format. If 
 than one output format is desired this can quickly become tedious. Fortunately `knitr`
 includes a function `pandoc` that takes care of the conversion process and
 can use a configuration file that lists all the desired options for the desired target
-formats. The configuration file used for this document is shown below.
+formats. The configuration file used for this document is shown below^[This also
+demonstrates another feature of `knitr`: It is possible to 
+[include external documents](http://yihui.name/knitr/demo/child/) using the `child`
+chunk option].
 
 ````
 ```{r configFile, child="example.pandoc"}
