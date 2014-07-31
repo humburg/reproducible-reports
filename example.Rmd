@@ -406,7 +406,7 @@ Here we make use of `pandoc`'s `--default-image-extension` option to set the dae
 image format to gif for HTML and docx output and to png for PDF.
 
 ## Tables
-It is often convenient to display the contents of R objects in the final document.
+It is often convenient to display the contents of R objects in the final document. 
 While it is easy to simply display the output of R's `print` statement as it would
 be displayed in the R console, this is not exactly producing pretty results. It
 is much more elegant to include proper tables that can be rendered nicely in
@@ -415,6 +415,9 @@ will then convert to the final output format) can be a daunting task. Fortunatel
 R functions exist to help with this task. The `knitr` package provides a simple function, 
 `kable`, that allows automatic formatting of tables. This requires the data to be in a 
 suitable format (either a `data.frame` or a `matrix`) so some preprocessing may be necessary.
+
+Consider the [iris](http://stat.ethz.ch/R-manual/R-patched/library/datasets/html/iris.html)
+dataset distributed with R.
 
 ```{r iris1, results="asis"}
 data(iris)
@@ -459,8 +462,31 @@ for(i in 3:4){
 The functionality provided by `pander` is alot more poweful than the simple `kable`
 function and can handle a wide variety of R objects.
 
-# Converting from Markdown to multiple output formats using `knitr`
+```{r iris6, results="asis"}
+pander(t.test(Sepal.Length ~ Species=="setosa", data=iris))
+```
 
+
+# Converting from Markdown to multiple output formats using `knitr`
+Once R code chunks have been executed via `knitr` the resulting Markdown document can be
+converted to a variety of other formats with the help of `pandoc`. This generally
+works well but can require the construction of lengthy command lines. To make things
+worse these command lines may differ depending on the desired output format. If more
+than one output format is desired this can quickly become tedious. Fortunately `knitr`
+includes a function `pandoc` that takes care of the conversion process and
+can use a configuration file that lists all the desired options for the desired target
+formats. The configuration file used for this document is shown below.
+
+````
+```{r configFile, child="example.pandoc"}
+```
+````
+
+This file contains one block fith format specific options for each output format, 
+starting with `t: <format>`. Note that the first block has no target format specification
+and contains options that apply to all output formats. The use of a config file like this
+makes it easy to manage the (potentially large) number of options required to achieve the 
+desired output.  
 
 # Preparing manuscripts for publication
 
