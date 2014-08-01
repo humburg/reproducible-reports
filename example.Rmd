@@ -505,6 +505,7 @@ the combination of `knitr` and `pandoc` can deliver a publication ready manuscri
 discuss simple extensions to add or enhance required features. 
 
 Features essential to for a manuscript intended for submission to a journal are
+
 * References need to be cited throughout the text and listed at the end in a format
   specified by the journal.
 * Figures and tables need to be numbered and cross-references to these should be
