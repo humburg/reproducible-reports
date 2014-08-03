@@ -1,0 +1,16 @@
+---
+title: Using knitr and pandoc to create reproducible scientific reports
+author: Peter Humburg
+date: `r format(Sys.time(), "%a %b %d %Y")`
+abstract: |
+    When carrying out data analyses it is desirable to do so in a reproducible way.
+    This aim is easier to achieve if a close link between the code, its documentation
+    and the results is maintained. If done consistently this leads to reports that
+    are relatively easy to maintain and can be updated automatically if either the data 
+    or details of the analysis change.
+    
+    Here we are exploring the use of R package `knitr` and the document conversion tool
+    `pandoc` to generate reproducible reports in R. After a general introduction to these
+    two tools aspects relevant to the writing of scientific reports are discussed in
+    some detail.
+... 
