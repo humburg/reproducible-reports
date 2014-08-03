@@ -6,6 +6,7 @@ highlight-style: tango
 
 t: html5
 self-contained:
+template: include/report.html5
 c: include/buttondown.css
 default-image-extension: gif
 
