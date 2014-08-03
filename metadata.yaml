@@ -1,7 +1,7 @@
 ---
 title: Using knitr and pandoc to create reproducible scientific reports
 author: Peter Humburg
-date: `r format(Sys.time(), "%a %b %d %Y")`
+date: `r format(Sys.time(), "%a %d %b %Y")`
 abstract: |
     When carrying out data analyses it is desirable to do so in a reproducible way.
     This aim is easier to achieve if a close link between the code, its documentation
