@@ -10,10 +10,11 @@ c: include/buttondown.css
 default-image-extension: gif
 
 t: latex
-chapters:
 latex-engine: xelatex
-V: geometry:margin=1in
-V: documentclass:report
+V: geometry:margin=2cm
+   geometry:driver=xetex
+   documentclass:report
+   classoption:a4paper
 H: include/captions.tex
 default-image-extension: png
 
