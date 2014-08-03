@@ -1,7 +1,5 @@
-% Using knitr and pandoc to create reproducible scientific reports
-% Peter Humburg
-% `r format(Sys.time(), "%a %b %d %Y")`
-
+```{r head, child="metadata.yaml"}
+```
 
 ```{r setup, echo = FALSE}
 require(knitr)
@@ -519,7 +517,28 @@ Features essential to for a manuscript intended for submission to a journal are
 * Support for footnotes.
 
 ## Document meta information
+Documents may contain metadata blocks in [YAML](http://www.yaml.org/) format. These
+blocks begin with three dashes `---` and end with either three dasshes `---` or thee
+dots `...`. More than one metadata block can be present in the same document in which
+case conflicts caused by duplicate fields will be resolved by retaining the field that
+occured first.
 
+Below is the metadata block used for this document.
+
+````yaml
+```{r child="metadata.yaml"}
+```
+````
+
+Information gathered from metadata blocks is used by `pandoc` to populate metadata
+fields in the output document. This can be used to set the title, list of authors
+and abstract. Entries may contain (nested) lists and objects but note that the default
+templates make assumptions about the structure of specific fields. The author field in 
+particular is expected to be a simple list or string. For the purpose of preparing 
+reports or publications it may be convenient to use a richer structure, e.g. a list 
+containing objects for name, affiliation and contact details. See the chapter on 
+[custom templates](#custom-templates) for details on how this structured author 
+information might be used. 
 
 ## Adding a bibliography
 Fortunately adding a list of refernces as well as citing them throughout the document
@@ -550,6 +569,8 @@ Several variations of this are supported by `pandoc`, see the
 
 ## Footnotes
 
+
+# Custom templates
 
 
 # Apendix {-}
