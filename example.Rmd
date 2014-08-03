@@ -518,10 +518,10 @@ Features essential to for a manuscript intended for submission to a journal are
 
 ## Document meta information
 Documents may contain metadata blocks in [YAML](http://www.yaml.org/) format. These
-blocks begin with three dashes `---` and end with either three dasshes `---` or thee
+blocks begin with three dashes `---` and end with either three dashes `---` or thee
 dots `...`. More than one metadata block can be present in the same document in which
 case conflicts caused by duplicate fields will be resolved by retaining the field that
-occured first.
+occurred first.
 
 Below is the metadata block used for this document.
 
