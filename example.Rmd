@@ -3,6 +3,9 @@
 
 ```{r setup, echo = FALSE}
 require(knitr)
+options(width=60, width.cutoff=60)
+opts_chunk$set(tidy=TRUE)
+
 hook_source_def = knit_hooks$get('source')
 knit_hooks$set(source = function(x, options){
   if (!is.null(options$verbatim) && options$verbatim){
@@ -562,6 +565,57 @@ Several variations of this are supported by `pandoc`, see the
 
 
 ## Better figure and table captions
+We already discussed how to generate figures and tables in `knitr` and we have seen
+that it is easy to add captions to these. However, so far all the figure and table cations
+were plain captions without any numbering. What we would like are figure captions that
+start with "Figure", or "Fig.", folowed by a number and a colon.  There currently is no
+`pandoc` mechanism that allows to generate such captions in multiple output formats but
+there is an active and ongoing discussion that may lead to support for this in a future
+`pandoc` version. In the meantime we can use R to generate suitable labels when processing
+the input document with `knitr`.
+
+The following R function allows us to keep track of figures throughout the document,
+create appropriately numbered captions as well as cross-references:
+
+```{r fig_cap}{.numberLines}
+figRef <- local({
+  tag <- numeric()
+  created <- logical()
+  used <- logical()
+  function(label, caption, prefix=options("figcap.prefix"), sep=options("figcap.sep")) {
+    i <- which(names(tag) == label)
+    if(length(i) == 0){
+      i <- length(tag) + 1
+      tag <<- c(tag, i)
+      names(tag)[length(tag)] <<- label
+      used <<- c(used, FALSE)
+      names(used)[length(used)] <<- label
+      created <<- c(created, FALSE)
+      names(created)[length(created)] <<- label
+    }
+    if(!missing(caption)){
+      created[label] <<- TRUE
+      paste0(prefix, " ", i, sep, " ", caption)
+    } else {
+      used[label] <<- TRUE
+      paste(prefix, tag[label])
+    }
+  }
+})
+``` 
+
+To get properly numbered figure captions all arguments to `knitr`'s `fig.cap` chunk
+option have to be wrapped in a call to `figRef` with two arguments. The first argument
+is the label that should be used to refer to the figure and the second argument is the 
+actual figure caption. The function is designed to allow some customisation. The prefix,
+e.g. 'Figure' or 'Fig.', can be set via the `prefix` argument and the separator to be used
+between the number and the caption is set by the `sep` argument. For conveniance the
+desired values can be stored together with other R options.
+
+```{r figOptions}
+options(figcap.prefix="Figure", figcap.sep=":")
+```
+
 
 
 ## Equations
@@ -579,3 +633,17 @@ Several variations of this are supported by `pandoc`, see the
 sessionInfo()
 ```
 
+```{r finaliser, echo=FALSE, results="hide"}
+if(!all(environment(figRef)$created)){
+    missingFig <- which(!environment(figRef)$created)
+    warning("Figures ", paste(missingFig, sep=", "), " with labels ", 
+      paste(names(environment(figRef)$created)[missingFig], sep=", "),
+      " are being referred to in the text but have never been created.")
+}
+if(!all(environment(figRef)$used)){
+    missingRef <- which(!environment(figRef)$used)
+    warning("Figures ", paste(missingRef, sep=", "), " with labels ", 
+      paste(names(environment(figRef)$used)[missingRef], sep=", "),
+      " are present in the document but are never referred to in the text.")
+}
+```
