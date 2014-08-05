@@ -22,6 +22,36 @@ rinline <- function(code){
 }
 ```
 
+```{r numbered_chunk_hook, eval=FALSE, echo=FALSE}
+
+# The current chunk hook may not be the default, and should be processed
+# prior to doing the numbering; which should come last.
+
+previous_chunk_hook <- knitr::knit_hooks$get("chunk")
+
+knitr::knit_hooks$set(chunk = function(x, options) {
+    
+    x <- previous_chunk_hook(x, options)
+    
+    if (isTRUE(options$number)) {
+        
+        str <- "{.r .numberLines"
+        if (!is.null(options$startFrom)) {
+            str <- paste0(str, " startFrom=\"", options$startFrom, "\"")
+        }
+        str <- paste0(str, "}")
+        
+        x <- gsub("(\\s?[`]{3,})r", paste0("\\1", str), x)
+        
+    }
+    
+    return(gsub("(^\n|\n+$)", "", x))
+    
+})
+```
+````{r numbered_chunk_hook, echo=FALSE}
+````
+
 # Introduction
 This is an introduction to the use of [Markdown](http://daringfireball.net/projects/markdown/)
 with embedded R code to create dynamic documents in multiple formats, 
@@ -577,12 +607,13 @@ the input document with `knitr`.
 The following R function allows us to keep track of figures throughout the document,
 create appropriately numbered captions as well as cross-references:
 
-```{r fig_cap}{.numberLines}
+```{r fig_cap, number=TRUE}
 figRef <- local({
   tag <- numeric()
   created <- logical()
   used <- logical()
-  function(label, caption, prefix=options("figcap.prefix"), sep=options("figcap.sep")) {
+  function(label, caption, prefix=options("figcap.prefix"), sep=options("figcap.sep"),
+      prefix.highlight=options("figcap.prefix.highlight")) {
     i <- which(names(tag) == label)
     if(length(i) == 0){
       i <- length(tag) + 1
@@ -595,7 +626,7 @@ figRef <- local({
     }
     if(!missing(caption)){
       created[label] <<- TRUE
-      paste0(prefix, " ", i, sep, " ", caption)
+      paste0(prefix.highlight, prefix, " ", i, sep, prefix.highlight, " ", caption)
     } else {
       used[label] <<- TRUE
       paste(prefix, tag[label])
@@ -609,14 +640,50 @@ option have to be wrapped in a call to `figRef` with two arguments. The first ar
 is the label that should be used to refer to the figure and the second argument is the 
 actual figure caption. The function is designed to allow some customisation. The prefix,
 e.g. 'Figure' or 'Fig.', can be set via the `prefix` argument and the separator to be used
-between the number and the caption is set by the `sep` argument. For conveniance the
-desired values can be stored together with other R options.
+between the number and the caption is set by the `sep` argument. It is also possible
+to adjust the formatting of the prefix in the figure caption, e.g. to display it with 
+strong emphasis. For convenience the desired values can be stored together with other 
+R options.
+
+Here we are setting the defaults to produce captions of the form 
+"**Figure N:** caption text".
 
 ```{r figOptions}
-options(figcap.prefix="Figure", figcap.sep=":")
+options(figcap.prefix="Figure", figcap.sep=":", figcap.prefix.highlight="**")
 ```
 
+Calling this function with the label as its sole argument will create a reference while
+a call with two arguments (label and caption text) will create the actual figure caption.
+Consider the following example:
 
+```{r carDataPlot, verbatim=TRUE, fig.cap=figRef("carData", "Car speed and stopping distances from the 1920s.")}
+plot(cars, xlab = "Speed (mph)", ylab = "Stopping distance (ft)",
+     las = 1)
+lines(lowess(cars$speed, cars$dist, f = 2/3, iter = 3), col = "red")
+```
+
+Now it is possible to refer back to this figure in the text using 
+\``r rinline("figRef(\"carData\")")`\`: `r figRef("carData")` shows a plot of car speeds
+and corresponding stop distances measured in the 1920s. Note the apparent 
+non-linearity in the data. The log-scale data shown in `r figRef("carLogData")`
+has a more linear appearance.
+
+```{r carLogDataPlot, fig.cap=figRef("carLogData", "Car speed and stopping distances on logarithmic scales.")}
+plot(cars, xlab = "Speed (mph)", ylab = "Stopping distance (ft)",
+     las = 1, log = "xy")
+lines(lowess(cars$speed, cars$dist, f = 2/3, iter = 3), col = "red")
+```
+
+Note how this allows to refer to figures before they are are created. Although forward 
+references should generally be avoided this isn't always possible when it comes to figures.
+To ensure that all figures mentioned in the text actually exist the following code
+can be added to a `knitr` chunk at the end of the document.
+
+```{r finaliser, eval=FALSE, echo=TRUE}
+``` 
+
+`r figRef("missingFigure")` dosn't exist and this generates a warning at the end 
+of the document.
 
 ## Equations
 
@@ -633,17 +700,17 @@ options(figcap.prefix="Figure", figcap.sep=":")
 sessionInfo()
 ```
 
-```{r finaliser, echo=FALSE, results="hide"}
+```{r finaliser, eval=TRUE, echo=FALSE}
 if(!all(environment(figRef)$created)){
     missingFig <- which(!environment(figRef)$created)
-    warning("Figures ", paste(missingFig, sep=", "), " with labels ", 
-      paste(names(environment(figRef)$created)[missingFig], sep=", "),
-      " are being referred to in the text but have never been created.")
+    warning("Figure(s) ", paste(missingFig, sep=", "), " with label(s) '", 
+      paste(names(environment(figRef)$created)[missingFig], sep="', '"),
+      "' are referenced in the text but have never been created.")
 }
 if(!all(environment(figRef)$used)){
     missingRef <- which(!environment(figRef)$used)
-    warning("Figures ", paste(missingRef, sep=", "), " with labels ", 
-      paste(names(environment(figRef)$used)[missingRef], sep=", "),
-      " are present in the document but are never referred to in the text.")
+    warning("Figure(s) ", paste(missingRef, sep=", "), " with label(s) '", 
+      paste(names(environment(figRef)$used)[missingRef], sep="', '"),
+      "' are present in the document but are never referred to in the text.")
 }
 ```
