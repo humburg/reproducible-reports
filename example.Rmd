@@ -685,8 +685,131 @@ can be added to a `knitr` chunk at the end of the document.
 `r figRef("missingFigure")` dosn't exist and this generates a warning at the end 
 of the document.
 
-## Equations
+The same approach can be used to obtain numbered table captions and corresponding 
+references in the text.
 
+```{r tab_cap, number=TRUE}
+tabRef <- local({
+  tag <- numeric()
+  created <- logical()
+  used <- logical()
+  function(label, caption, prefix=options("tabcap.prefix"), sep=options("tabcap.sep"),
+      prefix.highlight=options("tabcap.prefix.highlight")) {
+    i <- which(names(tag) == label)
+    if(length(i) == 0){
+      i <- length(tag) + 1
+      tag <<- c(tag, i)
+      names(tag)[length(tag)] <<- label
+      used <<- c(used, FALSE)
+      names(used)[length(used)] <<- label
+      created <<- c(created, FALSE)
+      names(created)[length(created)] <<- label
+    }
+    if(!missing(caption)){
+      created[label] <<- TRUE
+      paste0(prefix.highlight, prefix, " ", i, sep, prefix.highlight, " ", caption)
+    } else {
+      used[label] <<- TRUE
+      paste(prefix, tag[label])
+    }
+  }
+})
+
+options(tabcap.prefix="Table", tabcap.sep=":", tabcap.prefix.highlight="**")
+```
+
+This can then be combined with the `pander` table generation technique demonstrated
+above.
+
+```{r carFitPlot, fig.cap=figRef("carFit", "Polynomial regression fits."), results="asis"}
+plot(cars, xlab = "Speed (mph)", ylab = "Stopping distance (ft)",
+    las = 1, xlim = c(0, 25))
+d <- seq(0, 25, length.out = 200)
+for(degree in 1:4) {
+  fm <- lm(dist ~ poly(speed, degree), data = cars)
+  assign(paste("cars", degree, sep = "."), fm)
+  lines(d, predict(fm, data.frame(speed = d)), col = degree)
+}
+legend("topleft", legend=1:4, col=1:4, lty=1)
+
+set.caption(tabRef("carFit", "ANOVA table for polynomial regression fits to car speed and stopping distance data"))
+pander(anova(cars.1, cars.2, cars.3, cars.4))
+
+```
+
+This approach to figure and table captions has the advantage that it works for any
+output format and as such is well suited for situations where multiple output formats
+are required. The downside is that it doesn't make use of any cross-referencing facilities
+that may be supported by one or several of the output formnats. For example, $LaTeX$ has
+excellent support for this already and HTML output would benefit from the use of links 
+to the actual figure or table. When a single output format is used it clearly makes 
+sense to utilise the features it provides as much as possible. The multi-format 
+approach presented here could be improved through the addition of some additional
+markup and a [pandoc filter](http://johnmacfarlane.net/pandoc/scripting.html) that
+turns this markup into format specific output.
+
+## Equations
+There is good support for formula rendering in `pandoc`. Formulas can be written
+as TeX formulas between `$` (for inline math) or `$$` (for display math). These
+will be rendered in an output format specific way. In some formats, like HTML, 
+the result depends on the command-line options used. 
+
+----
+
+```markdown
+This is a familiar bit of inline math: $E=mc^2$.
+```
+
+This is a familiar bit of inline math: $E=mc^2$.
+
+----
+
+----
+
+```markdown
+Here is an equation in display math mode:
+$$f(x, \mu, \sigma) = \frac{1}{\sigma\sqrt{2\pi}}e^{-\frac{(x-\mu)^2}{2\sigma^2}}$$
+```
+
+Here is an equation in display math mode:
+$$f(x, \mu, \sigma) = \frac{1}{\sigma\sqrt{2\pi}}\,e^{-\frac{(x-\mu)^2}{2\sigma^2}}$$
+
+----
+
+While this generally works fairly well it doesn't allow for numbered equations.
+A possible workaround is to use `pandoc`'s example list feature for this purpose.
+An axample list consists of consecutively numbered list elements that don't have to
+be placed within the same list, i.e. they can be placed throughout the document.
+
+----
+
+```markdown
+(@cauchy) $f(x) = \frac{1}{\pi(1+x^2)}$
+
+The Cauchy distribution (with density given in Eq. (@cauchy)) is a special case 
+of Student's $t$-distribution (Eq. (@tdist)) with $\nu = 1$.
+
+(@tdist) $$f(t; \nu) = \frac{\Gamma(\frac{\nu+1}{2})} {\sqrt{\nu\pi}\,\Gamma(\frac{\nu}{2})} \left(1+\frac{t^2}{\nu} \right)^{-\frac{\nu+1}{2}}$$
+```
+
+(@cauchy) $f(x) = \frac{1}{\pi(1+x^2)}$
+
+The Cauchy distribution (with density given in Eq. (@cauchy)) is a special case 
+of Student's $t$-distribution (Eq. (@tdist)) with $\nu = 1$.
+
+(@tdist) $$f(t; \nu) = \frac{\Gamma(\frac{\nu+1}{2})} {\sqrt{\nu\pi}\,\Gamma(\frac{\nu}{2})} \left(1+\frac{t^2}{\nu} \right)^{-\frac{\nu+1}{2}}$$
+
+----
+
+While this solves the basic problem of getting numbered equations it isn't perfect. Equations
+are not centred and numberes appear on the left rather than the right as is customary.
+An additional problem when using display math (as in Eq. (@tdist)) is that the number
+and the equation are not lined up properly. It may be possible to fix this in HTML output
+through the use of appropriate CSS but that doesn't help for other output formats. For $LaTeX$ 
+this is particularly unsatisfying as  $LaTeX$  has much better support for equations.
+Again using a [filter](http://johnmacfarlane.net/pandoc/scripting.html) for additional 
+processing to produce equations that are better suited to the output format. This should
+allow the use of $LaTeX$ equation environments in $LaTeX$ output.
 
 ## Footnotes
 
