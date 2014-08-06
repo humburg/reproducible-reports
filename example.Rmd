@@ -797,22 +797,50 @@ of Student's $t$-distribution (Eq. (@tdist)) with $\nu = 1$.
 The Cauchy distribution (with density given in Eq. (@cauchy)) is a special case 
 of Student's $t$-distribution (Eq. (@tdist)) with $\nu = 1$.
 
-(@tdist) $$f(t; \nu) = \frac{\Gamma(\frac{\nu+1}{2})} {\sqrt{\nu\pi}\,\Gamma(\frac{\nu}{2})} \left(1+\frac{t^2}{\nu} \right)^{-\frac{\nu+1}{2}}$$
+(@tdist) $$f(t; \nu) = \frac{\Gamma(\frac{\nu+1}{2})} {\sqrt{\nu\pi}\,\Gamma(\frac{\nu}{2})}\,\left(1+\frac{t^2}{\nu} \right)^{-\frac{\nu+1}{2}}$$
 
 ----
 
 While this solves the basic problem of getting numbered equations it isn't perfect. Equations
 are not centred and numberes appear on the left rather than the right as is customary.
 An additional problem when using display math (as in Eq. (@tdist)) is that the number
-and the equation are not lined up properly. It may be possible to fix this in HTML output
-through the use of appropriate CSS but that doesn't help for other output formats. For $LaTeX$ 
-this is particularly unsatisfying as  $LaTeX$  has much better support for equations.
-Again using a [filter](http://johnmacfarlane.net/pandoc/scripting.html) for additional 
+and the equation are not lined up properly. It is possible to fix this in HTML output
+through the use of appropriate CSS but that doesn't help for other output formats. 
+
+----
+
+```markdown
+<div class="equation">
+(@gamma) $$\Gamma(t) = \int^\infty_0 x^{t-1}e^{-x}dx$$
+</div>
+```
+
+<div class="equation">
+(@gamma) $$\Gamma(t) = \int^\infty_0 x^{t-1}e^{-x}dx$$
+</div>
+
+----
+
+In the above example the equation is wrapped in a `div` with class "equation". This allows
+application of suitable CSS to improve the alignment of the equation. 
+Horizontal alignment of the formula is relatively straightford with CSS so it can be
+centred without too much difficulty in HTML output. Proper alignment with the automatically 
+generated number proves to be more difficult. The following javascript code does the trick.
+
+````javascript
+```{r child="include/equation.js"}
+```  
+````
+
+This isn't particularly elegant and only solves the problem for HTML.
+For $LaTeX$ the lack of proper equation handling is particularly unsatisfying as
+$LaTeX$  has much better support for equations. Again using a 
+[filter](http://johnmacfarlane.net/pandoc/scripting.html) for additional 
 processing to produce equations that are better suited to the output format. This should
-allow the use of $LaTeX$ equation environments in $LaTeX$ output.
+allow the use of $LaTeX$ equation environments in $LaTeX$ output. This filter can also make
+use of the `div` introduced above. 
 
 ## Footnotes
-
 
 # Custom templates
 
