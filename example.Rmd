@@ -841,6 +841,60 @@ allow the use of $LaTeX$ equation environments in $LaTeX$ output. This filter ca
 use of the `div` introduced above. 
 
 ## Footnotes
+The use of footnotes is well supported by `pandoc`. The easiest way to add a footnote is 
+the inline syntax.
+
+----
+
+```markdown
+This is regular text^[with a footnote].
+```
+
+This is regular text^[with a footnote].
+
+----
+
+It is also possible to use labels to identify a footnote, similar to the way references work.
+
+----
+
+````markdown
+When using the reference style a short label is present in the text[^1] and the
+actual footnote text is defined elsewhere.
+
+[^1]: This is closer to the appearance of the rendered text in the output but updating
+the footnote text is a little bit more work since it may be somewhere else in the document.
+
+    The advantage of this format is that it supports multi-block content. It could even
+    contain a code block if desired.
+    
+    ```r
+    message("This is R code")
+    ```
+    
+    The trick is to indent subsequent paragraphs to indicate that they form part of the
+    footnote.
+    
+Afterwards the normal text continues.
+````
+
+When using the reference style a short label is present in the text[^1] and the
+actual footnote text is defined elsewhere.
+
+[^1]: This is closer to the appearance of the rendered text in the output but updating
+the footnote text is a little bit more work since it may be somewhere else in the document.
+
+    The advantage of this format is that it supports multi-block content. It could even
+    contain a code block if desired.
+    
+    {code.block}
+    
+    The trick is to indent subsequent paragraphs to indicate that they form part of the
+    footnote.
+    
+Afterwards the normal text continues.
+
+----
 
 # Custom templates
 
