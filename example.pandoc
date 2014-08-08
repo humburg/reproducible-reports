@@ -10,6 +10,7 @@ webtex:
 template: include/report.html5
 c: include/buttondown.css
 default-image-extension: gif
+filter: include/equation.py
 include-in-header: include/equation.js
 
 t: latex
