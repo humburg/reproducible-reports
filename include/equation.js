@@ -4,7 +4,7 @@ function css( element, property ) {
 }
 
 function shiftImg(){
-	var images = document.querySelectorAll("div.equation img");
+	var images = document.querySelectorAll("div.equation_css img");
 
 	//Iterates through each of the images
 	for (var i = 0; i < images.length; i++) {
@@ -13,7 +13,7 @@ function shiftImg(){
 		var offset2 = Number(css(images[i].parentNode, "font-size").replace(/[^\d\.\-]/g, ''));
 		offset = offset - offset2 / 2;
 	    images[i].style.marginTop = offset.toString().concat("px");
-	    images[i].parentNode.style.marginBottom = images[i].style.marginTop; 
+	    images[i].parentNode.style.marginBottom = (offset + offset2).toString().concat("px");; 
 	    images[i].parentNode.style.marginTop = (-offset).toString().concat("px");
 	}
 }

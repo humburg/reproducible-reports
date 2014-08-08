@@ -815,7 +815,7 @@ through the use of appropriate CSS but that doesn't help for other output format
 </div>
 ```
 
-<div class="equation">
+<div id="gamma" class="equation_css">
 (@gamma) $$\Gamma(t) = \int^\infty_0 x^{t-1}e^{-x}dx$$
 </div>
 
@@ -837,8 +837,9 @@ For $LaTeX$ the lack of proper equation handling is particularly unsatisfying as
 $LaTeX$  has much better support for equations. Again using a 
 [filter](http://johnmacfarlane.net/pandoc/scripting.html) for additional 
 processing to produce equations that are better suited to the output format. This should
-allow the use of $LaTeX$ equation environments in $LaTeX$ output. This filter can also make
-use of the `div` introduced above. 
+allow the use of $LaTeX$ equation environments in $LaTeX$ output and could be used
+to produce better HTML output as well. This filter can also make use of the `div` 
+introduced above. See [below](#pandoc-filters) for an example of this can be achieved.
 
 ## Footnotes
 The use of footnotes is well supported by `pandoc`. The easiest way to add a footnote is 
@@ -898,6 +899,8 @@ Afterwards the normal text continues.
 
 # Custom templates
 
+
+# Pandoc filters
 
 # Apendix {-}
 ## Session info
