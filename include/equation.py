@@ -11,7 +11,7 @@ is used and a label matching the ID of the div (if present) is placed inside.
 If the div contains more than one math block the align environment
 is used instead but only the first equation is labelled. Alignment
 characters present in the equations ('&') are honoured. Equations
-without predifined alignment are aligned on the first '='.
+without predefined alignment are aligned on the first '='.
 """
 
 from pandocfilters import toJSONFilter, RawBlock, Div
