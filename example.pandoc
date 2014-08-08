@@ -19,6 +19,7 @@ V: geometry:margin=2cm
    documentclass:report
    classoption:a4paper
 H: include/captions.tex
+filter: include/equation.py
 default-image-extension: png
 
 t: docx
