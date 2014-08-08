@@ -14,9 +14,8 @@ characters present in the equations ('&') are honoured. Equations
 without predifined alignment are aligned on the first '='.
 """
 
-from pandocfilters import toJSONFilter, RawBlock, Div, Math
+from pandocfilters import toJSONFilter, RawBlock, Div
 import re
-import sys
 
 
 def latex(x):
@@ -36,7 +35,6 @@ def iter_flatten(iterable):
         yield f
     else:
       yield e
-
 
 def getMath(x):
     if isinstance(x, list):
