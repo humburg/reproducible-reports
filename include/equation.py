@@ -70,14 +70,18 @@ def alignHtmlMath(x):
                      cols[i][idx+2*skip+1:]]] 
     return out
     
-def formatHtmlMath(eq):
+def formatHtmlMath(eq, numbered=True):
+    if numbered:
+        finalStretch = ' nostretch'
+    else:
+        finalStretch = ''
     return [html(' <td class=\"eq_left\"> ')] + \
     [DisplayMath(eq[0])] + \
     [html(' </td>' + "\n")] + \
-    [html(' <td class=\"eq_centre\">')] + \
+    [html(' <td class=\"eq_centre nostretch\">')] + \
     [DisplayMath(eq[1])] + \
     [html(' </td>' + "\n")] + \
-    [html(' <td class=\"eq_right\"> ')] + \
+    [html(' <td class=\"eq_right' + finalStretch + '\"> ')] + \
     [DisplayMath(eq[2])] + \
     [html(' </td>' + "\n")]
 
@@ -121,7 +125,7 @@ def equation(key, value, format, meta):
                 for eq in math:
                     eqCount = eqCount + 1
                     body = body + [html('<tr>' + "\n")] 
-                    for sub in [formatHtmlMath(y) for y in eq]:
+                    for sub in [formatHtmlMath(y, ident != '') for y in eq]:
                         body = body + sub
                     if ident != '':
                         body = body + [html(' <td class=\"eq_number\"> <br>(' + \
