@@ -16,7 +16,7 @@ without predefined alignment are aligned on the first '='.
 
 from pandocfilters import toJSONFilter, RawBlock, Div
 import re
-
+import sys
 
 def latex(x):
   return RawBlock('latex',x)
@@ -55,16 +55,31 @@ def alignLatexMath(x):
 
 def alignHtmlMath(x):
     global relSymbol
-    relPattern = '|'.join(relSymbol)
-    align = re.search(r'[^\\]&', x) 
-    if align is not None:
-        idx = align.start()
-        skip = 1
-    else:
-        idx = re.search(relPattern, x).start()
-        skip = 0
-    return [x[:idx+skip], x[idx+2*skip:idx+2*skip+1], x[idx+2*skip+1:]]
+    relPattern = r'|'.join(relSymbol)
+    cols = re.split(r"[^\\]&(?!" + relPattern + ")", x)
+    align = [re.search(r"[^\\]&", x) for x in cols]
+    out = []
+    for i in range(len(align)): 
+        if align[i] is not None:
+            idx = align[i].start()
+            skip = 1
+        else:
+            idx = re.search(relPattern, cols[i]).start()
+            skip = 0
+        out = out + [[cols[i][:idx+skip], cols[i][idx+2*skip:idx+2*skip+1], 
+                     cols[i][idx+2*skip+1:]]] 
+    return out
     
+def formatHtmlMath(eq):
+    return [html(' <td class=\"eq_left\"> ')] + \
+    [DisplayMath(eq[0])] + \
+    [html(' </td>' + "\n")] + \
+    [html(' <td class=\"eq_centre\">')] + \
+    [DisplayMath(eq[1])] + \
+    [html(' </td>' + "\n")] + \
+    [html(' <td class=\"eq_right\"> ')] + \
+    [DisplayMath(eq[2])] + \
+    [html(' </td>' + "\n")]
 
 relSymbol = ['\\leq', '\\geq', '\\equiv', '\\models', '\\prec', '\\succ', '\\sim'
              '\\perp', '\\preceq', '\\succeq', '\\simeq', '\\mid', '\\ll', '\\gg',
@@ -105,18 +120,13 @@ def equation(key, value, format, meta):
                 body = [html('<tbody>' + "\n")]
                 for eq in math:
                     eqCount = eqCount + 1
-                    body = body + [html('<tr>' + "\n")] + \
-                        [html(' <td class=\"eq_left\"> ')] + \
-                        [DisplayMath(eq[0])] + \
-                        [html(' </td>' + "\n")] + \
-                        [html(' <td class=\"eq_centre\">')] + \
-                        [DisplayMath(eq[1])] + \
-                        [html(' </td>' + "\n")] + \
-                        [html(' <td class=\"eq_right\"> ')] + \
-                        [DisplayMath(eq[2])] + \
-                        [html(' </td>' + "\n")] + \
-                        [html(' <td class=\"eq_number\"> (' + str(eqCount) + ') </td>')] + \
-                        [html('</tr>' + "\n")]
+                    body = body + [html('<tr>' + "\n")] 
+                    for sub in [formatHtmlMath(y) for y in eq]:
+                        body = body + sub
+                    if ident != '':
+                        body = body + [html(' <td class=\"eq_number\"> <br>(' + \
+                                            str(eqCount) + ')<br> </td>')]
+                    body = body + [html('</tr>' + "\n")]
                 body = body + [html('</tbody>' + "\n")]
                 return head + body + tail
                 
