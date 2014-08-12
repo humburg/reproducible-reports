@@ -740,7 +740,7 @@ pander(anova(cars.1, cars.2, cars.3, cars.4))
 This approach to figure and table captions has the advantage that it works for any
 output format and as such is well suited for situations where multiple output formats
 are required. The downside is that it doesn't make use of any cross-referencing facilities
-that may be supported by one or several of the output formnats. For example, $LaTeX$ has
+that may be supported by one or several of the output formnats. For example, LaTeX has
 excellent support for this already and HTML output would benefit from the use of links 
 to the actual figure or table. When a single output format is used it clearly makes 
 sense to utilise the features it provides as much as possible. The multi-format 
@@ -833,13 +833,13 @@ generated number proves to be more difficult. The following javascript code does
 ````
 
 This isn't particularly elegant and only solves the problem for HTML.
-For $LaTeX$ the lack of proper equation handling is particularly unsatisfying as
-$LaTeX$  has much better support for equations. Again using a 
+For LaTeX the lack of proper equation handling is particularly unsatisfying as
+LaTeX  has much better support for equations. Again using a 
 [filter](http://johnmacfarlane.net/pandoc/scripting.html) for additional 
 processing to produce equations that are better suited to the output format. This should
-allow the use of $LaTeX$ equation environments in $LaTeX$ output and could be used
+allow the use of LaTeX equation environments in LaTeX output and could be used
 to produce better HTML output as well. This filter can also make use of the `div` 
-introduced above. See [below](#pandoc-filters) for an example of this can be achieved.
+introduced above. See [below](#pandoc-filters) for an example of how this can be achieved.
 
 ## Footnotes
 The use of footnotes is well supported by `pandoc`. The easiest way to add a footnote is 
@@ -902,7 +902,281 @@ Afterwards the normal text continues.
 
 # Pandoc filters
 
-# Apendix {-}
+It is possible to add additional processing steps to format conversions
+in `pandoc` through the use of filters. A filter is a small (or possibly
+rather complex) program that is executed by `pandoc` after the contents of
+the input file has been transformed into `pandoc`'s native (JSON) 
+representation. The filter can then modify that representation as desired
+and the resulting document is then converted to the target format.
+The filter has access to the requested target format and can therefore 
+be used to make format specific modifications. This can, e.g., be used
+to wrap equations in appropriate environments in LaTeX.
+
+Since `pandoc` is written in [Haskell](http://www.haskell.org/haskellwiki/Haskell)
+this is also the language best suited to writing filters. However, there
+is a Python module ([pandocfilters](https://github.com/jgm/pandocfilters)) providing
+support for the parsing and writing of `pandoc`'s native format. Once a filter
+has been written, and assuming that it is available in an executable form,
+it can be passed to `pandoc` through the `--filter` command-line option. 
+
+
+## Better equations 
+For the remainder of this chapter we will discuss a filter designed to provide
+better equations in LaTeX and HTML output. The aim is to use the `equation`
+environment in LaTeX for individual, numbered equations and the `align` environment
+for groups of equations that should be lined up with each other. In HTML output
+these should be rendered in a similar way, i.e. equations are centred with 
+numbering on the right and equations are lined up correctly where applicable.
+
+Here are a few equations we will use for testing:
+
+----
+
+```markdown
+<div id="volterra" class="equation">
+(@volterra) $$\frac{dx}{dt} = x(\alpha - \beta y)$$
+$$\frac{dy}{dt} = - y(\gamma - \delta  x)$$
+</div>
+
+The system of ordinary differential equations given by Eq. (@volterra) 
+is commonly used to describe predator-prey systems. Any solution to this
+system of equations satisfies the equality in Eq. (@volterra_constant).
+
+<div id="volterra_constant" class="equation">
+(@volterra_constant) $$V = -\delta \, x + \gamma \, \log(x) - \beta \, y + \alpha \, \log(y)$$
+</div>
+
+```
+
+<div id="volterra" class="equation">
+(@volterra) $$\frac{dx}{dt} = x(\alpha - \beta y)$$
+$$\frac{dy}{dt} = - y(\gamma - \delta  x)$$
+</div>
+
+The system of ordinary differential equations given by Eq. (@volterra) 
+is commonly used to describe predator-prey systems. Any solution to this
+system of equations satisfies the equality in Eq. (@volterra_constant).
+
+<div id="volterra_constant" class="equation">
+(@volterra_constant) $$V = -\delta \, x + \gamma \, \log(x) - \beta \, y + \alpha \, \log(y)$$
+</div>
+
+----
+
+### Python filter implementation
+This section provides a step-by-step explanation of the filter implementation. 
+The full code of the final script is available in the [appendix](#equation-filter).
+The Python script for achieving the desired equation formatting needs to
+import the `pandocfilters` module. We will also need regular expressions.
+
+```python
+#! /usr/bin/env python
+
+from pandocfilters import toJSONFilter, RawBlock, Div
+import re
+```
+
+The `pandocfilters` module provides the function `toJSONFilter`. This function
+takes another function as its sole argument and applies it to each node of
+the JSON document that is read from standard input.  To be able to pass this
+script to `pandoc` as one of the command-line options it needs to include the 
+following two lines.
+
+```python
+if __name__ == '__main__':
+    toJSONFilter(equation)
+```
+
+Of course we also need to define the function `equation`. This function has
+to accept four arguments corresponding to the key and value of the current
+node, the requested target format and the document's meta information.
+
+```python
+def equation(key, value, format, meta):
+  # process equation nodes
+```
+Whenever this function returns a value this value will replace the current node.
+If nothing is returned the current node is unchanged. The return value can be a 
+single object or a list of objects. To this end we will need to 
+generate Objects representing raw LaTeX and HTML code to add the desired formatting.
+To this end we define the following two functions with the help of element 
+constructors provided by `pandocfilters`.
+
+```python
+def latex(x):
+  return RawBlock('latex',x)
+
+def html(x):
+    return RawBlock('html', x)
+``` 
+
+The key is a short string identifying the type of node that is currently being
+processed. Since we have chosen to wrap all equations in a `div` with class
+'equation' we need to check this and proceed with processing whenever one 
+of these `div`s is encountered.
+
+```python
+  if key == 'Div':
+    [[ident,classes,kvs], contents] = value
+    if 'equation' in classes:
+      # process equation
+```
+
+Once we have identified the `div` we need to extract the actaul equations from the
+`contents`. Note that this may contain either one or several equations and these
+may be wrapped in an ordered list (if the example list style numbering system is
+used for other output formats). The following function extracts the contents of 
+math environments.
+
+```python
+def getMath(x):
+    if isinstance(x, list):
+        return [getMath(l) for l in x]
+    if isinstance(x, dict):
+        if x['t'] == 'Math':
+            return x['c'][1]
+        else:
+            return getMath(x['c'])
+```
+
+We need to apply this to all sub-nodes of the div. To facilitate the traversal of
+the corresponding nested list the function below is used.
+
+```python
+def iter_flatten(iterable):
+  it = iter(iterable)
+  for e in it:
+    if isinstance(e, (list, tuple)):
+      for f in iter_flatten(e):
+        yield f
+    else:
+      yield e
+```
+
+Together these functions allow us to generate a list of equations:
+
+```python
+math = iter_flatten([ getMath(contents)])
+math = [x for x in math if x is not None]
+```
+
+Note that this produces a list of lists with elements that may be 
+empty or `None` (because not all nodes contain equations). 
+The list comprehension in the second line above is used to flatten the list
+and remove all unwanted entries.
+
+###LaTeX output
+With the actual equations extracted from the div the main task remaining
+is to format them appropriately for the desired output format. If the div
+contains a single equation we'll use the `equation` environment for
+LaTeX output. If there are multiple equations grouped to gether the `align`
+environment is used to create a nicely lined-up block of equations. The `align`
+environment in LaTeX uses `&` to define alignment points. We want to allow manual alignment 
+of equations, meaning that existing `&` symbols need to be respected. In the absence
+of a predefined alignment we'll align equations on the first relational operator[^The 
+`align` environment allows the use of multiple alignment points to group equations 
+into columns. Automatic alignment generated by this filter
+only supports a single alignment point, set at the first relational operator. 
+If you want a more complex alignment all equations in a block should define the
+required alignment points.]. This is achieved with the function below.
+
+```python
+def alignLatexMath(x):
+    global relSymbol
+    relPattern = '|'.join(relSymbol)
+    if re.search(r'[^\\]&', x) is None:
+         idx = re.search(relPattern, x).start()
+         return x[:idx] + '&' + x[idx:]
+    return x
+```  
+
+The following code fragment then generates the LaTeX output.
+
+```python
+if format == 'latex':
+    type = 'equation'
+    if len(math) > 1:
+        type = 'align'
+        math = [alignLatexMath(x) for x in math]
+    if ident != '':
+        label = '\\label{' + ident + '}'
+    else:
+        type = type + '*'
+    return [latex('\\begin{' + type + '}' + label + "\n" + \
+                  "\\\\\n".join(math) + \
+                  "\n" + '\\end{' + type + '}')]
+```
+
+Note that this adds a label to the environment based on the ID of the div (if present)
+and for equations without label the numbering is suppressed. In cases where the
+`align` environment is used only the first equation will be labelled. 
+
+### HTML output
+For HTML output we'll use a table with appropriate CSS styling to obtain a similar
+effect. Since we can't rely on LaTeX's build-in facilities for handeling equations
+this requires slightly more effort. 
+
+The output consists of three columns per equation. These are used for the left and 
+right sides of the equation with the relational operator in the middle. If multiple
+columns of equations are required these three columns will be repeated for each.
+If the div is labelled an additional column is added at the end to contain the
+equation number. 
+
+To prepare equations for formatting we split them at the alignment point.
+
+```python
+def alignHtmlMath(x):
+    global relSymbol
+    relPattern = r'|'.join(relSymbol)
+    cols = re.split(r"[^\\]&(?!" + relPattern + ")", x)
+    align = [re.search(r"[^\\]&", x) for x in cols]
+    out = []
+    for i in range(len(align)): 
+        if align[i] is not None:
+            idx = align[i].start()
+            skip = 1
+        else:
+            idx = re.search(relPattern, cols[i]).start()
+            skip = 0
+        out = out + [[cols[i][:idx+skip], cols[i][idx+2*skip:idx+2*skip+1], 
+                     cols[i][idx+2*skip+1:]]] 
+    return out
+    
+math = [alignHtmlMath(x) for x in math]
+```
+
+Now we only need to decorate the resulting equation fragments with appropriate
+HTML tags to create the table.
+ 
+```python
+if ident != '':
+    label = 'id=\"' + ident + '\" '
+head = [html('<table ' + label + 'class=\"' + ' '.join(classes) + '\" ' + \
+    ' '.join(kvs) + '>' + "\n")]
+tail = [html('</table>' + "\n")]
+body = [html('<tbody>' + "\n")]
+for eq in math:
+    eqCount = eqCount + 1
+    body = body + [html('<tr>' + "\n")] 
+    for sub in [formatHtmlMath(y) for y in eq]:
+        body = body + sub
+    if ident != '':
+        body = body + [html(' <td class=\"eq_number\"> <br>(' + \
+                            str(eqCount) + ')<br> </td>')]
+    body = body + [html('</tr>' + "\n")]
+body = body + [html('</tbody>' + "\n")]
+```
+
+### Styling equations with CSS
+
+
+# Appendix {-}
+## Equation filter
+````{.python .numberLines}
+```{r equation-filter-complete, child="include/equation.py"}
+```
+````
+
 ## Session info
 ```{r session-info, echo=FALSE, results="asis"}
 sessionInfo()
