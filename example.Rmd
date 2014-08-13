@@ -953,7 +953,8 @@ system of equations satisfies the equality in Eq. (@volterra_constant).
 $$\frac{dy}{dt} = - y(\gamma - \delta  x)$$
 </div>
 
-The system of ordinary differential equations given by Eq. (@volterra) 
+The system of ordinary differential equations given by 
+Eq. <span id="volterra" class="eq_ref">(@volterra)</span> 
 is commonly used to describe predator-prey systems. Any solution to this
 system of equations satisfies the equality in Eq. (@volterra_constant).
 
@@ -1119,8 +1120,13 @@ this requires slightly more effort.
 The output consists of three columns per equation. These are used for the left and 
 right sides of the equation with the relational operator in the middle. If multiple
 columns of equations are required these three columns will be repeated for each.
-If the div is labelled an additional column is added at the end to contain the
-equation number. 
+If the `div` is labelled an additional column is added at the end to contain the
+equation number[^Here we are using a global variable (`eqCount`) in the python script to 
+keep track of the number of equations. We could use a CSS counter instead to insert
+the number into the web page as it is rendered in the browser. If all we wanted to do
+was to number the equations that would probabaly be the better solution but we will
+proceed to extend this to allow cross-references as well and CSS can't really handle
+those.]. 
 
 To prepare equations for formatting we split them at the alignment point.
 
@@ -1168,6 +1174,88 @@ body = body + [html('</tbody>' + "\n")]
 ```
 
 ### Styling equations with CSS
+Now that we have a filter that generates HTML output that is structured 
+to allow proper layout of equations the only missing piece is the actual 
+layout. A little bit of CSS should take care of that.
+
+We start by setting the table to span the full width of the content `div`.
+This will allow us to centre the equation while displaying the equation 
+number at the right margin.
+
+```css
+table.equation 
+{
+	width: 100%;
+}
+```
+
+Unfortunately this results in spreading the the equation out across the entire
+line. To achieve the desired effect we define a `nostretch` style for table cells
+and apply it to the cells holding the central and right part of the equation. 
+
+```css
+td.nostretch
+{
+	width: 1%;
+}
+```
+
+The result of this is that the the left and rightmost cells will stretch to fit
+the width of the contents `div`. All that is left to do is to ensure that the
+cotents of these cells is aligned properly.
+
+```css
+table.equation td:not(nostretch)
+{
+	text-align: right;
+}
+
+table.equation td.eq_right
+{
+	text-align: left;
+}
+```
+
+We need an extra rule to ensure that the right part of the equation is aligned left
+so that it is flush with the central part even when there are multiple rows
+with different length of contents for this column.
+
+### Keeping track of references
+Now equations are properly displayed and numbered in both HTML and LaTeX 
+output but unfortunately the cross-references in the text (generated via the 
+example list mechanism) are no longer garuanteed to match the numbers of the 
+actual equations. In HTML output the numbers should match if all equations
+contained in `equation` `div`s are numbered but LaTeX may use a different
+numbering scheme, e.g. numbering equations by chapter. Again it would make sense
+to utilise LaTeX's inherent abilities (this time for cross-referencing) and
+to add some additional code to achieve the same effect with HTML. It would 
+also be nice to retain the example list method for numbering equations
+as a fall back for other output formats.
+
+To achieve this we will again resort to additional markup, in this case 
+a `span` element: `markdown <span id="label" class="eq_ref">(@label)</span>`.
+This can the be processed by our equation filter by adding just a few extra
+lines of code.
+
+```python
+if key == 'Span':
+	[[ident,classes,kvs], contents] = value
+	if 'eq_ref' in classes:
+	    if format == 'latex':
+	        return latexInline("(" + "\\ref{" + ident + "})")              
+```
+
+For convenience we have also introduced a new (very simple) function.
+
+```python
+def latexInline(x):
+    return RawInline('latex', x)
+```
+
+For HTML output things are a bit more complicated as we have to keep track
+of equation numbers.
+
+
 
 
 # Appendix {-}
