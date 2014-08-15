@@ -127,14 +127,14 @@ def equation(key, value, format, meta):
                         id = id + [eqLabel(ident + '.' + str(i))]
             if format == 'latex':
                 type = 'equation'
+                if len(math) > 1:
+                    type = 'align'
+                    math = [alignLatexMath(x) for x in math]
                 if ident != '':
                     label = ['\\label{' + id + '}' for id in id]
                 else:
                     type = type + '*'
                     label = id
-                if len(math) > 1:
-                    type = 'align'
-                    math = [alignLatexMath(x) for x in math]
                 math = zip(math, label)
                 return [latex('\\begin{' + type + '}' +  "\n" + \
                               "\\\\\n".join([e + ' ' + l for (e, l) in math]) + \
