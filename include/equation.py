@@ -14,15 +14,22 @@ characters present in the equations ('&') are honoured. Equations
 without predefined alignment are aligned on the first '='.
 """
 
-from pandocfilters import toJSONFilter, RawBlock, Div
+from pandocfilters import toJSONFilter, RawBlock, RawInline
 import re
 import sys
 
 def latex(x):
   return RawBlock('latex',x)
+  
+def latexInline(x):
+    return RawInline('latex', x)
+
 
 def html(x):
     return RawBlock('html', x)
+
+def htmlInline(x):
+    return RawInline('html', x)
 
 def DisplayMath(x):
     return { u'c': [{u'c': [{u'c': [], u't': u'DisplayMath'}, x], u't': u'Math'}], u't': u'Plain'} 
@@ -85,6 +92,18 @@ def formatHtmlMath(eq, numbered=True):
     [DisplayMath(eq[2])] + \
     [html(' </td>' + "\n")]
 
+def eqNumber(id):
+    global eqCount
+    global _eqLabel
+    if id not in _eqLabel.keys():
+        _eqLabel[id] = len(_eqLabel) + 1
+    return str(_eqLabel[id])
+
+def eqLabel(id):
+    eqNumber(id)
+    return id
+    
+
 relSymbol = ['\\leq', '\\geq', '\\equiv', '\\models', '\\prec', '\\succ', '\\sim'
              '\\perp', '\\preceq', '\\succeq', '\\simeq', '\\mid', '\\ll', '\\gg',
              '\\asymp', '\\parallel', '\\subset', '\\supset', '\\approx', '\\bowtie',
@@ -92,7 +111,7 @@ relSymbol = ['\\leq', '\\geq', '\\equiv', '\\models', '\\prec', '\\succ', '\\sim
              '\\neq', '\\smile', '\\sqsubseteq', '\\sqsupseteq', '\\doteq', '\\frown',
              '\\in', '\\ni', '\\propto', '=', '\\vdash', '\\dashv', '<', '>']
 
-eqCount = 0
+_eqLabel = {}
 
 def equation(key, value, format, meta):
     if key == 'Div':
@@ -100,40 +119,54 @@ def equation(key, value, format, meta):
         if 'equation' in classes:
             math = iter_flatten([ getMath(contents)])
             math = [x for x in math if x is not None]
-            label = ''
-            global eqCount 
+            id = [''] * len(math)
+            if ident != '':
+                id = [eqLabel(ident)]
+                if len(math) > 1:
+                    for i in xrange(1, len(math)):
+                        id = id + [eqLabel(ident + '.' + str(i))]
             if format == 'latex':
                 type = 'equation'
+                if ident != '':
+                    label = ['\\label{' + id + '}' for id in id]
+                else:
+                    type = type + '*'
+                    label = id
                 if len(math) > 1:
                     type = 'align'
                     math = [alignLatexMath(x) for x in math]
-                if ident != '':
-                    label = '\\label{' + ident + '}'
-                else:
-                    type = type + '*'
-                return [latex('\\begin{' + type + '}' + label + "\n" + \
-                              "\\\\\n".join(math) + \
+                math = zip(math, label)
+                return [latex('\\begin{' + type + '}' +  "\n" + \
+                              "\\\\\n".join([e + ' ' + l for (e, l) in math]) + \
                               "\n" + '\\end{' + type + '}')]
             if format == 'html' or format == 'html5':
                 math = [alignHtmlMath(x) for x in math]
                 if ident != '':
-                    label = 'id=\"' + ident + '\" '
-                head = [html('<table ' + label + 'class=\"' + ' '.join(classes) + '\" ' + \
+                    label = ['id=\"' + x + '\" ' for x in id]
+                else: label = id
+                head = [html('<table class=\"' + 
+                             ' '.join(classes) + '\" ' + \
                     ' '.join(kvs) + '>' + "\n")]
                 tail = [html('</table>' + "\n")]
                 body = [html('<tbody>' + "\n")]
-                for eq in math:
-                    eqCount = eqCount + 1
+                for (i, eq) in enumerate(math):
                     body = body + [html('<tr>' + "\n")] 
                     for sub in [formatHtmlMath(y, ident != '') for y in eq]:
                         body = body + sub
-                    if ident != '':
-                        body = body + [html(' <td class=\"eq_number\"> <br>(' + \
-                                            str(eqCount) + ')<br> </td>')]
+                    if ident != '':                     
+                        body = body + [html(' <td ' + label[i] + 
+                                        'class=\"eq_number\"> <br>(' + 
+                                        eqNumber(id[i]) + ')<br> </td>')]
                     body = body + [html('</tr>' + "\n")]
                 body = body + [html('</tbody>' + "\n")]
                 return head + body + tail
-                
+    if key == 'Span':
+        [[ident,classes,kvs], contents] = value
+        if 'eq_ref' in classes:
+            if format == 'latex':
+                return latexInline("(" + "\\ref{" + ident + "})")
+            if format == 'html' or format == 'html5':
+                return htmlInline("(<a href=#" + ident + ">" + eqNumber(ident) + "</a>)")
         
 if __name__ == '__main__':
     toJSONFilter(equation)
