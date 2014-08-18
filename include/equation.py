@@ -93,7 +93,6 @@ def formatHtmlMath(eq, numbered=True):
     [html(' </td>' + "\n")]
 
 def eqNumber(id):
-    global eqCount
     global _eqLabel
     if id not in _eqLabel.keys():
         _eqLabel[id] = len(_eqLabel) + 1
