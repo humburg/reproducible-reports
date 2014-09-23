@@ -897,11 +897,79 @@ Afterwards the normal text continues.
 
 ----
 
-# Custom templates
+# Customising output
+`Pandoc` provides default templates for all supported output formats. These
+provide a quick and easy way to generate output in a variety of formats.
+Typically they produce decent looking results and in some cases will be
+all that is required. However, complex documents for large projects often
+benefit from some customisation. 
+
+## Using custom headers
+Many output formats use header information to specify details of the 
+output rendering. Modifying the header can give substantial control 
+over the appearance of the final output. Using the `-H` option of 
+`pandoc` allows the contents of arbitrary files to be added to the
+header of a template. For example, to tweak the appearance of figure 
+and table captions the following file is included for the LaTeX output
+of this document.
+
+````latex
+```{r child="include/captions.tex"}
+```
+````
+Multiple files with header content can be included in this way, allowing
+for a some flexibility and the option to create re-usable header fragments.
+
+## Custom templates
+Sometimes more substantials modifications are called for. In this case
+it may be possible to create a custom template that incorporates the 
+desired changes. The best way to create a custom template is to start
+with the default template for the desired output format and modify it as
+necessary. The latest version of all `pandoc` templates are available
+on [GitHub](https://github.com/jgm/pandoc-templates). While it is possible
+to simply download the desired file and modify it, the recommended way
+of producing custom templates is to fork the repository and then
+commit all changes to the forked version. This makes it easier to update
+the customised version of the template with changes to the 
+default^[see <https://help.github.com/articles/syncing-a-fork> for a description of
+how to do this]. This may be necessary to accomodate changes to `pandoc`.
+
+Customising templates can be particularly useful when the default doesn't
+handle certain types of metadata that should be displayed in the output.
+For example, this document contains an abstract that is included in the 
+PDF output but ignored in the HTML output by default. This can be changed by
+adding a few lines to the HTML5 template.
+
+```
+$if(abstract)$
+<section class="abstract">
+<h1 class="abstract">Abstract</h1>
+$abstract$
+</section>
+$endif$
+```
+Adding this between the header block and the table of contents block has the 
+desired effect of including the text of the abstract near the top of the
+page. This can then be styled with CSS as desired. The style sheet used here
+has the following:
+
+```css
+h1.abstract
+	{
+	text-align: center;
+	}
+section.abstract
+	{
+	width:50%;
+	margin-left:auto;
+	margin-right:auto;
+	background:#eef;
+	padding:10px;
+	}
+```
 
 
 # Pandoc filters
-
 It is possible to add additional processing steps to format conversions
 in `pandoc` through the use of filters. A filter is a small (or possibly
 rather complex) program that is executed by `pandoc` after the contents of
@@ -956,7 +1024,8 @@ $$\frac{dy}{dt} = - y(\gamma - \delta  x)$$
 The system of ordinary differential equations given by 
 Eq. <span id="volterra" class="eq_ref">(@volterra)</span> 
 is commonly used to describe predator-prey systems. Any solution to this
-system of equations satisfies the equality in Eq. (@volterra_constant).
+system of equations satisfies the equality in 
+Eq. <span id="volterra_constant" class="eq_ref">(@volterra_constant).
 
 <div id="volterra_constant" class="equation">
 (@volterra_constant) $$V = -\delta \, x + \gamma \, \log(x) - \beta \, y + \alpha \, \log(y)$$
@@ -1110,7 +1179,12 @@ if format == 'latex':
 
 Note that this adds a label to the environment based on the ID of the div (if present)
 and for equations without label the numbering is suppressed. In cases where the
-`align` environment is used only the first equation will be labelled. 
+`align` environment is used only the first equation will be labelled with the provided
+ID and all subsequent equations will be assigned labels of the form `ID.n`, starting
+with n = 1 and increasing by one for each subsequent equation. While this allows 
+referencing of individual equations within an `align` environment it can be difficult
+to maintain these references if new equations get inserted into the middle of a 
+block.
 
 ### HTML output
 For HTML output we'll use a table with appropriate CSS styling to obtain a similar
@@ -1189,7 +1263,7 @@ table.equation
 }
 ```
 
-Unfortunately this results in spreading the the equation out across the entire
+Unfortunately this results in spreading the equation out across the entire
 line. To achieve the desired effect we define a `nostretch` style for table cells
 and apply it to the cells holding the central and right part of the equation. 
 
@@ -1253,7 +1327,20 @@ def latexInline(x):
 ```
 
 For HTML output things are a bit more complicated as we have to keep track
-of equation numbers.
+of equation numbers. We'll use a dictionary to store labels and corresponding 
+numbers for equations. Whenever a new equation label is encountered in the
+document it has to be added to the dictionary. The function `eqNumber` can be
+called with a label and will return the corresponding equation number (registering
+the label in the process if it hasn't occoured before).
+
+```python
+_eqLabel = {}
+def eqNumber(id):
+    global _eqLabel
+    if id not in _eqLabel.keys():
+        _eqLabel[id] = len(_eqLabel) + 1
+    return str(_eqLabel[id])
+```
 
 
 
