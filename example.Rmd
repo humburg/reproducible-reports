@@ -1006,9 +1006,11 @@ Here are a few equations we will use for testing:
 $$\frac{dy}{dt} = - y(\gamma - \delta  x)$$
 </div>
 
-The system of ordinary differential equations given by Eq. (@volterra) 
+The system of ordinary differential equations given by 
+Eq. <span id="volterra" class="eq_ref">(@volterra)</span> 
 is commonly used to describe predator-prey systems. Any solution to this
-system of equations satisfies the equality in Eq. (@volterra_constant).
+system of equations satisfies the equality in 
+Eq. <span id="volterra_constant" class="eq_ref">(@volterra_constant)</span>.
 
 <div id="volterra_constant" class="equation">
 (@volterra_constant) $$V = -\delta \, x + \gamma \, \log(x) - \beta \, y + \alpha \, \log(y)$$
@@ -1025,7 +1027,7 @@ The system of ordinary differential equations given by
 Eq. <span id="volterra" class="eq_ref">(@volterra)</span> 
 is commonly used to describe predator-prey systems. Any solution to this
 system of equations satisfies the equality in 
-Eq. <span id="volterra_constant" class="eq_ref">(@volterra_constant).
+Eq. <span id="volterra_constant" class="eq_ref">(@volterra_constant)</span>.
 
 <div id="volterra_constant" class="equation">
 (@volterra_constant) $$V = -\delta \, x + \gamma \, \log(x) - \beta \, y + \alpha \, \log(y)$$
