@@ -2,9 +2,9 @@
 title: Using knitr and pandoc to create reproducible scientific reports
 author: 
   - name: Peter Humburg
-    affiliation: WTCHG
+    affiliation: 1
 address:
-  - code: WTCHG
+  - code: 1
     address: Wellcome Trust Centre for Human Genetics, University of Oxford, Roosevelt Dr., Oxford, OX3 7BN, UK
 date: `r format(Sys.time(), "%a %d %b %Y")`
 abstract: |

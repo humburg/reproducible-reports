@@ -16,6 +16,7 @@ include-in-header: include/equation.js
 
 t: latex
 latex-engine: xelatex
+template: include/report.latex
 V: geometry:margin=2cm
    geometry:driver=xetex
    documentclass:report
