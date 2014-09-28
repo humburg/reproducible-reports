@@ -66,6 +66,19 @@ div#header, header
     color: DarkGray;
     }
 
+/* div with author affiliations and addresses */
+.address {
+	font-size: 75%;
+	width: 75%;
+	text-align: right;
+	margin: 0 auto;
+}
+
+#address-list{
+	width: 90%;
+	text-align: left;
+}
+
 h1.abstract
 	{
 	text-align: center;

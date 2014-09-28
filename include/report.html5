@@ -32,6 +32,18 @@ $endif$
 $for(header-includes)$
   $header-includes$
 $endfor$
+$if(address)$
+<script>
+function toggleDisplay(d) {
+	if(document.getElementById(d).style.display == "none") { 
+		document.getElementById(d).style.display = "block"; 
+	}
+	else { 
+		document.getElementById(d).style.display = "none"; 
+	}
+}
+</script>
+$endif$
 </head>
 <body>
 $for(include-before)$
@@ -46,9 +58,27 @@ $endif$
 $if(author)$
 <h2 class="author">
 $for(author)$
-$author$$sep$, 
+$if(author.name)$
+$if(author.affiliation)$
+<span data-affiliation="$author.affiliation$" class="author_name">$author.name$</span>
+$else$
+$author.name$
+$endif$
+$else$
+$author$
+$endif$$sep$, 
 $endfor$
 </h2>
+$if(address)$
+<div class="address">
+<a href="#" id="address-header" onclick=toggleDisplay("address-list")>Author Affiliations</a>
+<ol id="address-list" style="display:none">
+$for(address)$
+<li data-id="$address.code$">$address.address$</li>
+$endfor$
+</ol>
+</div>
+$endif$
 $endif$
 $if(date)$
 <h3 class="date">$date$</h3>

@@ -1,6 +1,11 @@
 ---
 title: Using knitr and pandoc to create reproducible scientific reports
-author: Peter Humburg
+author: 
+  - name: Peter Humburg
+    affiliation: WTCHG
+address:
+  - code: WTCHG
+    address: Wellcome Trust Centre for Human Genetics, University of Oxford, Roosevelt Dr., Oxford, OX3 7BN, UK
 date: `r format(Sys.time(), "%a %d %b %Y")`
 abstract: |
     When carrying out data analyses it is desirable to do so in a reproducible way.

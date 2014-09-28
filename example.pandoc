@@ -12,6 +12,7 @@ c: include/buttondown.css
 default-image-extension: gif
 filter: include/equation.py
 include-in-header: include/equation.js
+    include/affiliation.js
 
 t: latex
 latex-engine: xelatex
