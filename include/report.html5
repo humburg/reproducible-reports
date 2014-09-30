@@ -60,7 +60,7 @@ $if(author)$
 $for(author)$
 $if(author.name)$
 $if(author.affiliation)$
-<span data-affiliation="$author.affiliation$" class="author_name">$author.name$</span>
+<span data-affiliation="$for(author.affiliation)$$author.affiliation$$sep$, $endfor$" class="author_name">$author.name$</span>
 $else$
 $author.name$
 $endif$

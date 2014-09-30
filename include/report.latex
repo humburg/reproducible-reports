@@ -135,7 +135,7 @@ $if(author)$
 	\usepackage{authblk}
 	$if(address)$
 		$for(author)$
-			\author[$author.affiliation$]{$author.name$}
+			\author[$for(author.affiliation)$$author.affiliation$$sep$, $endfor$]{$author.name$}
 		$endfor$
 		$for(address)$
 			\affil[$address.code$]{$address.address$}
