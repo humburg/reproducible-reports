@@ -849,7 +849,7 @@ Horizontal alignment of the formula is relatively straightford with CSS so it ca
 centred without too much difficulty in HTML output. Proper alignment with the automatically 
 generated number proves to be more difficult. The following javascript code does the trick.
 
-````javascript
+````{.javascript .numberLines}
 ```{r child="include/equation.js"}
 ```  
 ````
@@ -1105,7 +1105,7 @@ being enabled in the browser. The appearance of the address information can then
 be modified with CSS. Here we also use additional javascript to toggle
 the display when the heading is clicked.
 
-```.javascript
+```{.javascript}
 function toggleDisplay(d) {
 	if(document.getElementById(d).style.display == "none") { 
 		document.getElementById(d).style.display = "block"; 
