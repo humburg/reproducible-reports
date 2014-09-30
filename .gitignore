@@ -1,1 +1,9 @@
 .project
+.pydevproject
+/example.pdf
+/example.md
+/example.html
+/example.docx
+/figure/
+/dist3.gif
+/dist3.png
