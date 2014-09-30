@@ -757,7 +757,7 @@ support the generation of publication ready documents the use of more structured
 author fields is desirable. For this document we use author information of the 
 following form:
 
-```.yaml
+```{.yaml}
 author: 
   - name: Author Name
     affiliation: 1
@@ -1104,6 +1104,17 @@ requires some extra processing of the output. It also relies on javascript
 being enabled in the browser. The appearance of the address information can then 
 be modified with CSS. Here we also use additional javascript to toggle
 the display when the heading is clicked.
+
+```.javascript
+function toggleDisplay(d) {
+	if(document.getElementById(d).style.display == "none") { 
+		document.getElementById(d).style.display = "block"; 
+	}
+	else { 
+		document.getElementById(d).style.display = "none"; 
+	}
+}
+```
 
 # Pandoc filters
 It is possible to add additional processing steps to format conversions
