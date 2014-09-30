@@ -748,6 +748,28 @@ approach presented here could be improved through the addition of some additiona
 markup and a [pandoc filter](http://johnmacfarlane.net/pandoc/scripting.html) that
 turns this markup into format specific output.
 
+## Structured author information
+By default `pandoc` only supports simple strings (or a list of strings) for the 
+author field in the metadata block. This means that including information in
+addition to author names, e.g. affiliations and addresses, is dificult (but note
+that strings are interpreted as markdown so some formatting is possible). To really
+support the generation of publication ready documents the use of more structured
+author fields is desirable. For this document we use author information of the 
+following form:
+
+```.yaml
+author: 
+  - name: Author Name
+    affiliation: 1
+address:
+  - code: 1
+    address: Department, Institution, Street address
+``` 
+Other fields could be added to this, e.g. to indicate corresponding authors. In
+order for this additional information to be displayed in the output we need to 
+extend the default templates to use this information. The required changes
+to the the HTML and LaTeX templates are discussed [below](#structured-author).
+
 ## Equations
 There is good support for formula rendering in `pandoc`. Formulas can be written
 as TeX formulas between `$` (for inline math) or `$$` (for display math). These
@@ -934,6 +956,30 @@ the customised version of the template with changes to the
 default^[see <https://help.github.com/articles/syncing-a-fork> for a description of
 how to do this]. This may be necessary to accomodate changes to `pandoc`.
 
+Templates allow access to `pandoc`'s template variables. All variable expressions
+are surrounded by `$`: `$variable$`. These can be used
+in conditionals, adjusting the contents of the output accordingly.
+
+```
+$if(variable)$
+$variable$
+$else$
+Some default text.
+$endif$
+```
+In cases where a variable contains a list it is possible to iterate over
+its elements, inserting each into the text. For exxample, the default latex 
+template has the following code to populate the author field.
+
+```
+$if(author)$
+\author{$for(author)$$author$$sep$ \and $endfor$}
+$endif$
+```
+Note that `$sep$` allows the specification of a separator to be used between
+list elements.
+
+### Including an abstract in HTML output
 Customising templates can be particularly useful when the default doesn't
 handle certain types of metadata that should be displayed in the output.
 For example, this document contains an abstract that is included in the 
@@ -968,6 +1014,96 @@ section.abstract
 	}
 ```
 
+### Using structured author fields {#structured-author}
+LaTeX, unsurprisingly, has pretty good support for additional author information.
+Here we use the [`authblk`](http://www.ctan.org/pkg/authblk) package to typeset 
+the addresses. This allows us to specify authors and their affiliations
+through a shared identifier. This conveniently matches the format used
+in the metadata block. 
+
+Here is the (somewhat more complex) template code to insert author
+information with optional affiliation.
+```{.latex .numberLines}
+$if(author)$
+	\usepackage{authblk}
+	$if(address)$
+		$for(author)$
+			\author[$author.affiliation$]{$author.name$}
+		$endfor$
+		$for(address)$
+			\affil[$address.code$]{$address.address$}
+		$endfor$
+	$else$
+		$for(author)$
+			$if(author.name)$
+				\author{$author.name$}
+			$else$
+				\author{$author$}
+			$endif$
+		$endfor$ 
+	$endif$
+$endif$
+```
+
+This supports multiple authors and can handle both the new structured
+author blocks as well as the original plain author field. However,
+in its current for it only supports a single affiliation per author.
+Note how line 5 uses the `author.affiliation` field:
+`\author[$author.affiliation$]{$author.name$}`. This assumes a single
+string but can be modified to handle a list of strings instead by
+wrapping the variable in a for loop: 
+`\author[$for(author.affiliation)$$author.affiliation$$sep$, $endfor$]{$author.name$}`.
+This largely works as intended with the only limitation that the
+IDs used to associate authors with intitutions are directly used
+as superscripts to the author's name. It would be desirable to generate
+a sequence of consecutive numbers (or other LaTeX symbols) automatically
+but that would require further processing.
+
+As one might expect direct support for structured author information
+in HTML output is a bit more limited. The modification to the template
+follow similar lines.
+
+```{.html .numberLines}
+$if(author)$
+	<h2 class="author">
+	$for(author)$
+		$if(author.name)$
+			$if(author.affiliation)$
+				<span data-affiliation="$for(author.affiliation)$$author.affiliation$$sep$, $endfor$" class="author_name">$author.name$</span>
+			$else$
+				$author.name$
+			$endif$
+		$else$
+			$author$
+		$endif$$sep$, 
+	$endfor$
+	</h2>
+	$if(address)$
+		<div class="address">
+		<a href="#" id="address-header" onclick=toggleDisplay("address-list")>Author Affiliations</a>
+		<ol id="address-list" style="display:none">
+		$for(address)$
+			<li data-id="$address.code$">$address.address$</li>
+		$endfor$
+		</ol>
+		</div>
+	$endif$
+$endif$
+```
+The addresses are added as an ordered list (lines 17 - 25), providing us with 
+automatic numbering. The corresponding IDs are stored in a data attribute
+of the list elements as well as with the author names. To generate the matching
+superscripts to the names we use a few lines of javascript.
+
+````{.javascript .numberLines}
+```{r affiliationCode, child="include/affiliation.js"}
+```
+````
+Unlike the LaTeX solution this supports the use of arbitrary IDs but 
+requires some extra processing of the output. It also relies on javascript
+being enabled in the browser. The appearance of the address information can then 
+be modified with CSS. Here we also use additional javascript to toggle
+the display when the heading is clicked.
 
 # Pandoc filters
 It is possible to add additional processing steps to format conversions
