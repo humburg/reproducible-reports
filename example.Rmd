@@ -75,6 +75,7 @@ of two of these.
     (which includes numerous extension to the original format) as input and use its 
     conversion capabilities to obtain output in several commonly used formats.  
 
+## Code conventions
 Throughout this document examples of R code and Markdown formatting will be presented in 
 code blocks:
 ```r
@@ -98,6 +99,11 @@ This is Markdown text in **bold** and *italics*.
 
 In addition to the code examples provided throughout this document the document itself is
 written in Markdown with embedded R code and may illustrate additional features.
+
+## Availability
+The HTML version of this document is [available online](http://galahad.well.ox.ac.uk/repro/index.html).
+The [PDF version](http://galahad.well.ox.ac.uk/repro/repro_example.pdf) is available for download and
+the source files are on [GitHub](https://github.com/humburg/reproducible-reports).
 
 # Brief Markdown primer
 A Markdown formatted file is in essence a plain text file that may contain a number of
