@@ -61,8 +61,19 @@ document if either the code or the data change. As a result analyses become a lo
 easier to reproduce because the code and the presentation of results are closely 
 linked and figures and tables can be updated automatically.
 
-Several tools are available to do this but here we will mainly focus on a combination
-of two of these.
+Traditionally dynamic R documents like this have been (and often still are) 
+written in LaTeX using either Sweave or, more recently, `knitr`. While LaTeX is a very
+powerful tool that allows great control over page layout, the learning curve can be
+steep. More importantly, adding LaTeX commands to the text can be distracting and break 
+the flow of writing and coding (at least for me) and the resulting LaTeX documents
+are not very readable. Of course they can be turned into beautiful PDFs but that doesn't
+help while editing the text. More recently the use of Markdown has become popular. 
+Writing Markdown is much easier than LaTeX, thus lowering the entry barrier, and its
+emphasis on maintaining readability of the raw text means that both writing and editing
+documents is faster than with LaTeX. 
+
+Several tools are available to produce dynamic documents in Markdown and convert them
+to various output formats. Here we will mainly focus on a combination of two of these.
 
 [`knitr`](http://yihui.name/knitr/)
 :   This R package provides functions that allow the processing of Markdown documents
