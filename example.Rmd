@@ -86,6 +86,22 @@ to various output formats. Here we will mainly focus on a combination of two of 
     (which includes numerous extension to the original format) as input and use its 
     conversion capabilities to obtain output in several commonly used formats.  
 
+Much, if not all, of what is needed to create a reproducible analysis is provided by
+`knitr`. A selection of tutorials and useful examples for `knitr` can be found on 
+[`knitr`'s homepage](http://yihui.name/knitr/demo/showcase/). However, when trying
+to use this to generate publication quality reports the limitations of the
+Markdown syntax quickly start to become apparent. The focus on simplicity and the 
+fact that it was originally designed for authoring web content means that much
+of the requirements for scientific writing are not easily met by standard Markdown.
+
+`Pandoc` is a very useful tool that helps to alleviate this problem. It comes with its 
+own Markdown dialect that includes many extensions that fill some of the gaps in the
+Markdown syntax, including the ability to use bibliographic databases in a variety of
+formats, while trying to retain the text's readability. It also facilitates the 
+conversion between a large number of 
+[document formats](http://johnmacfarlane.net/pandoc/diagram.png), providing
+great flexibility.  
+
 ## Code conventions
 Throughout this document examples of R code and Markdown formatting will be presented in 
 code blocks:
