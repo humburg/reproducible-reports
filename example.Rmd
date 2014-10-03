@@ -73,29 +73,22 @@ emphasis on maintaining readability of the raw text means that both writing and 
 documents is faster than with LaTeX. 
 
 Several tools are available to produce dynamic documents in Markdown and convert them
-to various output formats. Here we will mainly focus on a combination of two of these.
-
-[`knitr`](http://yihui.name/knitr/)
-:   This R package provides functions that allow the processing of Markdown documents
-    with embedded R code. The code will be executed and its output, including plots,
-    can be included in the output.
-[`pandoc`](http://johnmacfarlane.net/pandoc/)
-:   This is a versatile tool that supports conversion between a large number of input
-    and output formats. We will use 
-    [pandoc's own Markdown flavour](http://johnmacfarlane.net/pandoc/demo/example9/pandocs-markdown.html)
-    (which includes numerous extension to the original format) as input and use its 
-    conversion capabilities to obtain output in several commonly used formats.  
+to various output formats. Here we will mainly focus on a combination of two of these,
+namely [`knitr`](http://yihui.name/knitr/) and [`pandoc`](http://johnmacfarlane.net/pandoc/). 
 
 Much, if not all, of what is needed to create a reproducible analysis is provided by
-`knitr`. A selection of tutorials and useful examples for `knitr` can be found on 
-[`knitr`'s homepage](http://yihui.name/knitr/demo/showcase/). However, when trying
-to use this to generate publication quality reports the limitations of the
-Markdown syntax quickly start to become apparent. The focus on simplicity and the 
-fact that it was originally designed for authoring web content means that much
-of the requirements for scientific writing are not easily met by standard Markdown.
+`knitr`. This R package provides functions that allow the processing of Markdown documents
+with embedded R code. The code will be executed and its output, including plots,
+can be included in the output. A selection of tutorials and useful examples for 
+`knitr` can be found on [`knitr`'s homepage](http://yihui.name/knitr/demo/showcase/). 
+However, when trying to use this to generate publication quality reports the 
+limitations of the Markdown syntax quickly start to become apparent. The focus on 
+simplicity and the fact that it was originally designed for authoring web content means 
+that much of the requirements for scientific writing are not easily met by standard Markdown.
 
-`Pandoc` is a very useful tool that helps to alleviate this problem. It comes with its 
-own Markdown dialect that includes many extensions that fill some of the gaps in the
+`Pandoc` is a very useful tool that helps to alleviate this problem. It comes with 
+[its own Markdown dialect](http://johnmacfarlane.net/pandoc/demo/example9/pandocs-markdown.html) 
+that includes many extensions that fill some of the gaps in the
 Markdown syntax, including the ability to use bibliographic databases in a variety of
 formats, while trying to retain the text's readability. It also facilitates the 
 conversion between a large number of 
