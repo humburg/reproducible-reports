@@ -11,7 +11,7 @@ output. This can be done either by starting an R session and executing
 `knitr("example.Rmd")` or from the command line:
 
 ```
-Rscript --slave -e "libray(knitr);knitr('example.Rmd')" 
+Rscript --slave -e "library(knitr);knit('example.Rmd')" 
 ```
 Either way this generates a Markdown file called 'example.md'. This can then be
 converted into PDF and HTML files by using the configuration file 'example.pandoc'
