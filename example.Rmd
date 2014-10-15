@@ -159,14 +159,18 @@ Additional R packages used:
   formatting of R objects)
 
 These can be installed via the `install.packages` command from within R.
-Animations also require [ffmpeg](https://www.ffmpeg.org/).
+Animations also require [ffmpeg](https://www.ffmpeg.org/) and either
+[ImageMagick](http://www.imagemagick.org/) or 
+[GraphicsMagick](http://www.graphicsmagick.org/).
 
 As one might expect a working LaTeX tool chain is required to generate
 PDF output from LaTeX documents. Several distributions are available
 online, including [MiKTeX](http://miktex.org/) and [TeX Live](https://www.tug.org/texlive/). 
 
-[Python](https://www.python.org/) ($\geq$ 2.7) is required for `pandoc` the 
-filters discussed in the latter parts of this document.
+[Python](https://www.python.org/) ($\geq$ 2.7) is required for the `pandoc`
+filters discussed in the latter parts of this document. This also requires
+the `pandocfilters` Python module, which can be installed via 
+[pip](https://pypi.python.org/pypi/pip).
 
 # Brief Markdown primer
 A Markdown formatted file is in essence a plain text file that may contain a number of
@@ -459,7 +463,7 @@ for(i in 1:20){
 ```
 
 It is possible to generate an animated GIF from this sequence of plots by wrapping the
-above code in a function and then calling `saveGIF` from the animation package.
+above code in a function and then calling `saveGIF` from the animation package. 
 
 ```{r distributions3, results="hide"}
 threeDists <- function(df, x=seq(-6,6, by=0.1)){
@@ -482,8 +486,11 @@ plotFun <- function(df){
 animation::saveGIF(lapply(1:20, plotFun), interval=0.5, movie.name="dist3.gif")
 ```
 
+The code above assumes that ImageMagick is installed. If you are using GraphicsMagick
+instead add the option `convert="gm convert"` to the `saveGIF` call.  
+
 Since the graphics output of this code is written directly to a file rather than an on-screen
-graphics device it will not outomatically included in the Markdown document produced 
+graphics device it will not be automatically included in the Markdown document produced 
 by `knitr`. It can be included manually using the Markdown syntax for the inclusion
 of figures.
 
@@ -502,8 +509,39 @@ threeDists(1)
 dev.off()
 ```
 
-Here we make use of `pandoc`'s `--default-image-extension` option to set the daefault
+Here we make use of `pandoc`'s `--default-image-extension` option to set the default
 image format to gif for HTML and docx output and to png for PDF.
+
+### Creating animations on Windows
+The procedure for generating animations may fail on Windows^[Thanks to 
+[reyntjesr](https://github.com/reyntjesr) for reporting this issue and providing 
+the work around described here.]. This may be due to a conflict
+between ImageMagick's `convert.exe`, which is used to convert from png to gif,
+and Windows' own `convert.exe`, which converts between FAT and NTFS file systems.
+It may be possible to circumvent this issue by using 
+[GraphicsMagick](http://www.graphicsmagick.org/) for the conversion instead. To
+do this, install GraphicsMagick and replace the call to `saveGIF` above with
+
+```r
+animation::saveGIF(lapply(1:20, plotFun), interval=0.5, movie.name="dist3.gif",
+		convert="gm convert")
+```
+
+An alternative work-around involves bypassing the animation package entirely.
+Instead, rename ImageMagick's `convert.exe` to `imConvert.exe`^[Instead of 
+renaming the file it is also possible to use the full path to ImageMagick's `convert.exe`
+in the shell command.], generate one
+png file for each frame of the animation and then call `imConvert` manually
+to create the animated gif.
+
+```r
+png(file="figure/threeDist%02d.png", width=500, heigh=500)
+  lapply(1:20, threeDists)
+dev.off()
+
+shell("imConvert -delay 40 figure/threeDist*.png dist3.gif")
+``` 
+
 
 ## Tables
 It is often convenient to display the contents of R objects in the final document. 
