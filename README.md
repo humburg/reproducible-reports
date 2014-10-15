@@ -44,5 +44,7 @@ As one might expect a working LaTeX tool chain is required to generate
 PDF output from LaTeX documents. Several distributions are available
 online, including [MiKTeX](http://miktex.org/) and [TeX Live](https://www.tug.org/texlive/). 
 
-[Python](https://www.python.org/) (>= 2.7) is required for `pandoc` the 
-filters discussed in the latter parts of this document.
+[Python](https://www.python.org/) ($\geq$ 2.7) is required for the `pandoc`
+filters discussed in the latter parts of this document. This also requires
+the `pandocfilters` Python module, which can be installed via 
+[pip](https://pypi.python.org/pypi/pip).
