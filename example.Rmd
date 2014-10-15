@@ -485,7 +485,7 @@ animation::saveGIF(lapply(1:20, plotFun), interval=0.5, movie.name="dist3.gif")
 ```
 
 Since the graphics output of this code is written directly to a file rather than an on-screen
-graphics device it will not outomatically included in the Markdown document produced 
+graphics device it will not be automatically included in the Markdown document produced 
 by `knitr`. It can be included manually using the Markdown syntax for the inclusion
 of figures.
 
