@@ -463,7 +463,7 @@ for(i in 1:20){
 ```
 
 It is possible to generate an animated GIF from this sequence of plots by wrapping the
-above code in a function and then calling `saveGIF` from the animation package.
+above code in a function and then calling `saveGIF` from the animation package. 
 
 ```{r distributions3, results="hide"}
 threeDists <- function(df, x=seq(-6,6, by=0.1)){
@@ -485,6 +485,9 @@ plotFun <- function(df){
 
 animation::saveGIF(lapply(1:20, plotFun), interval=0.5, movie.name="dist3.gif")
 ```
+
+The code above assumes that ImageMagick is installed. If you are using GraphicsMagick
+instead add the option `convert="gm convert"` to the `saveGIF` call.  
 
 Since the graphics output of this code is written directly to a file rather than an on-screen
 graphics device it will not be automatically included in the Markdown document produced 
