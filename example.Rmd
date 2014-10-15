@@ -504,7 +504,7 @@ threeDists(1)
 dev.off()
 ```
 
-Here we make use of `pandoc`'s `--default-image-extension` option to set the daefault
+Here we make use of `pandoc`'s `--default-image-extension` option to set the default
 image format to gif for HTML and docx output and to png for PDF.
 
 ## Tables
