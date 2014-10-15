@@ -507,6 +507,37 @@ dev.off()
 Here we make use of `pandoc`'s `--default-image-extension` option to set the default
 image format to gif for HTML and docx output and to png for PDF.
 
+### Creating animations on Windows
+The procedure for generating animations may fail on Windows^[Thanks to 
+[reyntjesr](https://github.com/reyntjesr) for reporting this issue and providing 
+the work around described here.]. This may be due to a conflict
+between ImageMagick's `convert.exe`, which is used to convert from png to gif,
+and Windows' own `convert.exe`, which converts between FAT and NTFS file systems.
+It may be possible to circumvent this issue by using 
+[GraphicsMagick](http://www.graphicsmagick.org/) for the conversion instead. To
+do this, install GraphicsMagick and replace the call to `saveGIF` above with
+
+```r
+animation::saveGIF(lapply(1:20, plotFun), interval=0.5, movie.name="dist3.gif",
+		convert="gm convert")
+```
+
+An alternative work-around involves bypassing the animation package entirely.
+Instead, rename ImageMagick's `convert.exe` to `imConvert.exe`^[Instead of 
+renaming the file it is also possible to use the full path to ImageMagick's `convert.exe`
+in the shell command.], generate one
+png file for each frame of the animation and then call `imConvert` manually
+to create the animated gif.
+
+```r
+png(file="figure/threeDist%02d.png", width=500, heigh=500)
+  lapply(1:20, threeDists)
+dev.off()
+
+shell("imConvert -delay 40 figure/threeDist*.png dist3.gif")
+``` 
+
+
 ## Tables
 It is often convenient to display the contents of R objects in the final document. 
 While it is easy to simply display the output of R's `print` statement as it would
