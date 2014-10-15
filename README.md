@@ -38,7 +38,9 @@ Additional R packages used:
   formatting of R objects)
 
 These can be installed via the `install.packages` command from within R.
-Animations also require [ffmpeg](https://www.ffmpeg.org/).
+Animations also require [ffmpeg](https://www.ffmpeg.org/) and either
+[ImageMagick](http://www.imagemagick.org/) or 
+[GraphicsMagick](http://www.graphicsmagick.org/).
 
 As one might expect a working LaTeX tool chain is required to generate
 PDF output from LaTeX documents. Several distributions are available
